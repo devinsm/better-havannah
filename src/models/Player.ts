@@ -8,4 +8,8 @@ export default class Player {
     this.stoneColor = stoneColor;
     this.id = shortid.generate();
   }
+
+  equals(other: Player): boolean {
+    return this === other;
+  }
 }

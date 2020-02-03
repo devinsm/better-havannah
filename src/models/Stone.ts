@@ -12,7 +12,9 @@ export default class Stone {
   }
 
   equals(other: Stone): boolean {
-    return this.owner === other.owner && this.location === other.location;
+    return (
+      this.owner.equals(other.owner) && this.location.equals(other.location)
+    );
   }
 
   hash(): string {

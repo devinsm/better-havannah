@@ -26,3 +26,18 @@ test('cords with different cols are not equal', () => {
   expect(cord1.equals(cord2)).toBe(false);
   expect(cord2.equals(cord1)).toBe(false);
 });
+
+// If this was part of a normal hash table implementation this would not be
+// necessary (i.e. there could be collisions). However these "hashes" are
+// intended to be used as keys in JavaScript objects where collisions
+// will not be handled
+test('cords with different cols have different hash', () => {
+  const cord1: Coordinate = new Coordinate({ row: 4, col: 2 });
+  const cord2: Coordinate = new Coordinate({ row: 4, col: 3 });
+  expect(cord1.hash()).not.toBe(cord2.hash());
+});
+test('cords with different rows have different hash', () => {
+  const cord1: Coordinate = new Coordinate({ row: 3, col: 2 });
+  const cord2: Coordinate = new Coordinate({ row: 4, col: 2 });
+  expect(cord1.hash()).not.toBe(cord2.hash());
+});
