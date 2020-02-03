@@ -1,12 +1,12 @@
-import Cordinate from 'models/Coordinate';
+import Coordinate from 'models/Coordinate';
 import Player from 'models/Player';
 
 export default class Stone {
   // Stones can not be moved
-  readonly location: Cordinate;
+  readonly location: Coordinate;
   readonly owner: Player;
 
-  constructor({ location, owner }: { location: Cordinate; owner: Player }) {
+  constructor({ location, owner }: { location: Coordinate; owner: Player }) {
     this.location = location;
     this.owner = owner;
   }

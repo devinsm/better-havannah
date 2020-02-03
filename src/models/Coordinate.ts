@@ -1,5 +1,5 @@
 export default class Coordinate {
-  // Cordinates are immutable
+  // Coordinates are immutable
   readonly row: number;
   readonly col: number;
 
