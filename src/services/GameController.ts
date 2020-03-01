@@ -18,6 +18,9 @@ export default class GameController {
   @observable
   private _boardSize: number = DEFAULT_BOARD_SIZE;
 
+  /**
+   * map from coordinate hash => stone at that coordinate
+   */
   @observable
   private _stones: Map<string, Stone> = new Map();
 

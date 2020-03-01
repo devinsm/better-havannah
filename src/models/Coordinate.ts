@@ -1,18 +1,50 @@
+/**
+ * With size S board, only first (2 * S) - 1 letters valid.
+ * This limits the board size to S <= 12, which I deemed acceptable.
+ */
+export type File =
+  | 'a'
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h'
+  | 'i'
+  | 'j'
+  | 'k'
+  | 'l'
+  | 'm'
+  | 'n'
+  | 'o'
+  | 'p'
+  | 'q'
+  | 'r'
+  | 's'
+  | 't'
+  | 'u'
+  | 'v'
+  | 'w'
+  | 'x'
+  | 'y'
+  | 'z';
+
 export default class Coordinate {
   // Coordinates are immutable
-  readonly row: number;
-  readonly col: number;
+  readonly file: File;
+  readonly rank: number;
 
-  constructor({ row, col }: { row: number; col: number }) {
-    this.row = row;
-    this.col = col;
+  constructor({ file, rank }: { file: File; rank: number }) {
+    this.file = file;
+    this.rank = rank;
   }
 
   equals(other: Coordinate): boolean {
-    return this.row === other.row && this.col === other.col;
+    return this.file === other.file && this.rank === other.rank;
   }
 
   hash(): string {
-    return `${this.row},${this.col}`;
+    return `${this.file}${this.rank}`;
   }
 }
