@@ -1,5 +1,7 @@
 import React from 'react';
 import GameController from 'services/GameController';
+import { within } from '@testing-library/dom';
+import Coordinate from 'models/Coordinate';
 
 import { render } from 'test-utils';
 // import { within } from '@testing-library/dom';
@@ -18,35 +20,33 @@ test('board (base 3) renders all tiles', () => {
   const board = getByLabelText('Game Board');
   expect(board.getAttribute('role')).toBe('group');
 
-  // const boardQueries = within(board);
+  const boardQueries = within(board);
 
-  // const cords: Coordinate[] = [
-  //   new Coordinate({ row: 0, col: 2 }),
-  //   new Coordinate({ row: 1, col: 1 }),
-  //   new Coordinate({ row: 1, col: 3 }),
-  //   new Coordinate({ row: 2, col: 0 }),
-  //   new Coordinate({ row: 2, col: 2 }),
-  //   new Coordinate({ row: 2, col: 4 }),
-  //   new Coordinate({ row: 3, col: 1 }),
-  //   new Coordinate({ row: 3, col: 3 }),
-  //   new Coordinate({ row: 4, col: 0 }),
-  //   new Coordinate({ row: 4, col: 2 }),
-  //   new Coordinate({ row: 4, col: 4 }),
-  //   new Coordinate({ row: 5, col: 1 }),
-  //   new Coordinate({ row: 5, col: 3 }),
-  //   new Coordinate({ row: 6, col: 0 }),
-  //   new Coordinate({ row: 6, col: 2 }),
-  //   new Coordinate({ row: 6, col: 4 }),
-  //   new Coordinate({ row: 7, col: 1 }),
-  //   new Coordinate({ row: 7, col: 3 }),
-  //   new Coordinate({ row: 8, col: 2 })
-  // ];
+  const cords: Coordinate[] = [
+    new Coordinate({ file: 'e', rank: 3 }),
+    new Coordinate({ file: 'e', rank: 4 }),
+    new Coordinate({ file: 'e', rank: 5 }),
+    new Coordinate({ file: 'd', rank: 2 }),
+    new Coordinate({ file: 'd', rank: 3 }),
+    new Coordinate({ file: 'd', rank: 4 }),
+    new Coordinate({ file: 'd', rank: 5 }),
+    new Coordinate({ file: 'c', rank: 1 }),
+    new Coordinate({ file: 'c', rank: 2 }),
+    new Coordinate({ file: 'c', rank: 3 }),
+    new Coordinate({ file: 'c', rank: 4 }),
+    new Coordinate({ file: 'c', rank: 5 }),
+    new Coordinate({ file: 'b', rank: 1 }),
+    new Coordinate({ file: 'b', rank: 2 }),
+    new Coordinate({ file: 'b', rank: 3 }),
+    new Coordinate({ file: 'b', rank: 4 }),
+    new Coordinate({ file: 'a', rank: 1 }),
+    new Coordinate({ file: 'a', rank: 2 }),
+    new Coordinate({ file: 'a', rank: 3 })
+  ];
 
-  // for (const cord of cords) {
-  //   const tile = boardQueries.getByLabelText(
-  //     `Cell: rank ${cord.col + 1}, file ${cord.row + 1}`
-  //   );
-  //   expect(tile.getAttribute('role')).toBe('button');
-  //   expect(tile.getAttribute('aria-pressed')).toBe('false');
-  // }
+  for (const cord of cords) {
+    const tile = boardQueries.getByLabelText(`Cell ${cord.file}${cord.rank}`);
+    expect(tile.getAttribute('role')).toBe('button');
+    expect(tile.getAttribute('aria-pressed')).toBe('false');
+  }
 });
