@@ -115,7 +115,7 @@ const useCellStyles = makeStyles(theme =>
   createStyles({
     root: {
       fill: theme.palette.background.paper,
-      stroke: theme.palette.grey['600']
+      stroke: theme.palette.common.black
     }
   })
 );

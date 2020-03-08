@@ -15,15 +15,24 @@ const Board: React.ComponentType = () => {
   // borders) is: sideLength * cos(30 degrees) * ( 4 * boardSize - 2)
   // The height of the SVG in user units is always (arbitrarily) set to 100,
   // and then the board is scaled using viewBox.
+  const heightSvgUnits = 100;
   const maxCellSideLength =
-    100 / (Math.cos((1 / 6) * Math.PI) * (4 * boardSize - 2));
+    heightSvgUnits / (Math.cos((1 / 6) * Math.PI) * (4 * boardSize - 2));
+
+  const cellSideLength = maxCellSideLength;
+
+  const widthSvgUnits =
+    cellSideLength * 0.5 + (2 * boardSize - 1) * 1.5 * cellSideLength;
+  const heightPx = 1000;
+  const widthPx = (widthSvgUnits / heightSvgUnits) * heightPx;
+
   return (
     <svg
       aria-labelledby="game-board-title"
       role="group"
-      width="1000px"
-      height="1000px"
-      viewBox="0 0 100 100"
+      width={`${widthPx}px`}
+      height={`${heightPx}px`}
+      viewBox={`0 0 ${widthSvgUnits} ${heightSvgUnits}`}
     >
       <title id="game-board-title">Game Board</title>
       {coordinates.map(coord => (
