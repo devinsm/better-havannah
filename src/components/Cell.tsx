@@ -120,6 +120,24 @@ const useCellStyles = makeStyles(theme =>
   })
 );
 
+/**
+ * All points are initially calculated without taking into account the width
+ * of the border. This made the math easier. This function MUST be called on
+ * each point before it is used in the SVG in order to adjust for border width.
+ */
+function adjustPoint({
+  point,
+  borderWidth
+}: {
+  point: SvgCoordinate;
+  borderWidth: number;
+}): SvgCoordinate {
+  return {
+    x: point.x + 0.5 * borderWidth,
+    y: point.y + 0.5 * borderWidth
+  };
+}
+
 export interface CellProps {
   location: Coordinate;
   /**
@@ -127,11 +145,17 @@ export interface CellProps {
    * Should be given in SVG user units.
    */
   cellSideLength: number;
+  /**
+   * Width of the cell border.
+   * Should be given in SVG user units.
+   */
+  borderWidth: number;
 }
 
 const Cell: React.ComponentType<CellProps> = ({
   location,
-  cellSideLength
+  cellSideLength,
+  borderWidth
 }: CellProps) => {
   const styleClasses = useCellStyles();
   const { gameController } = useContext(ServiceContext);
@@ -163,7 +187,10 @@ const Cell: React.ComponentType<CellProps> = ({
     y: middleRight.y
   };
 
-  const toString = (point: SvgCoordinate): string => `${point.x},${point.y}`;
+  const toString = (point: SvgCoordinate): string => {
+    const adjustedPoint = adjustPoint({ point, borderWidth });
+    return `${adjustedPoint.x},${adjustedPoint.y}`;
+  };
   return (
     <polygon
       className={styleClasses.root}
@@ -175,7 +202,7 @@ const Cell: React.ComponentType<CellProps> = ({
       role="button"
       aria-label={`Cell ${location.file}${location.rank}`}
       aria-pressed="false"
-      strokeWidth="0.01"
+      strokeWidth={borderWidth}
     />
   );
 };
