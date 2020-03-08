@@ -5,9 +5,10 @@ import React from 'react';
 import { render } from 'test-utils';
 import App from 'App';
 import { Services } from 'services/ServiceContainer';
+import GameController from 'services/GameController';
 
 const getMockServices = (): Services => ({
-  gameController: null
+  gameController: new GameController()
 });
 
 let mockServices: Services = getMockServices();

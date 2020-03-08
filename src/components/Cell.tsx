@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import Coordinate, { File } from 'models/Coordinate';
 import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import * as utils from 'utils';
 
 type SvgCoordinate = { x: number; y: number };
@@ -110,6 +111,15 @@ function getSvgCoords({
   };
 }
 
+const useCellStyles = makeStyles(theme =>
+  createStyles({
+    root: {
+      fill: theme.palette.background.paper,
+      stroke: theme.palette.grey['600']
+    }
+  })
+);
+
 export interface CellProps {
   location: Coordinate;
   /**
@@ -123,6 +133,7 @@ const Cell: React.ComponentType<CellProps> = ({
   location,
   cellSideLength
 }: CellProps) => {
+  const styleClasses = useCellStyles();
   const { gameController } = useContext(ServiceContext);
   const cellHeight = getCellHeight(cellSideLength);
   const topLeft: SvgCoordinate = getSvgCoords({
@@ -155,6 +166,7 @@ const Cell: React.ComponentType<CellProps> = ({
   const toString = (point: SvgCoordinate): string => `${point.x},${point.y}`;
   return (
     <polygon
+      className={styleClasses.root}
       points={`${toString(topLeft)} ${toString(topRight)} ${toString(
         middleRight
       )} ${toString(bottomRight)} ${toString(bottomLeft)} ${toString(
@@ -163,8 +175,6 @@ const Cell: React.ComponentType<CellProps> = ({
       role="button"
       aria-label={`Cell ${location.file}${location.rank}`}
       aria-pressed="false"
-      fill="green"
-      stroke="black"
       strokeWidth="0.01"
     />
   );
