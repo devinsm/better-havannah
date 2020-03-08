@@ -7,7 +7,15 @@ const useAppStyles = makeStyles(theme =>
     root: {
       backgroundColor: theme.palette.background.default,
       minHeight: '100%',
-      padding: '1px 0'
+      padding: '1px 0',
+      display: 'flex',
+      justifyContent: 'center'
+    },
+    content: {
+      maxWidth: '1100px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
     }
   })
 );
@@ -15,8 +23,10 @@ const App: React.ComponentType = () => {
   const styleClasses = useAppStyles();
   return (
     <div className={styleClasses.root}>
-      <h1>Havannah</h1>
-      <Board />
+      <div className={styleClasses.content}>
+        <h1>Havannah</h1>
+        <Board widthPx={1100} />
+      </div>
     </div>
   );
 };

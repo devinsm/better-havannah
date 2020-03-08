@@ -3,7 +3,7 @@ import Stone from 'models/Stone';
 import Player from 'models/Player';
 import Coordinate from 'models/Coordinate';
 
-const DEFAULT_BOARD_SIZE = 12;
+const DEFAULT_BOARD_SIZE = 8;
 
 export enum GameState {
   NOT_STARTED,

@@ -5,7 +5,11 @@ import { ServiceContext } from 'services/ServiceContainer';
 import Cell from './Cell';
 import * as utils from 'utils';
 
-const Board: React.ComponentType = () => {
+export interface BoardProps {
+  widthPx: number;
+}
+
+const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
   const { gameController } = useContext(ServiceContext);
   const boardSize = gameController!.boardSize;
   const coordinates: Coordinate[] = utils.getCoordinates(boardSize);
@@ -16,29 +20,26 @@ const Board: React.ComponentType = () => {
   // The height of the SVG in user units is always (arbitrarily) set to 100,
   // and then the board is scaled using viewBox.
   const heightSvgUnits = 100;
-  const maxCellSideLength =
+  const cellSideLength =
     heightSvgUnits / (Math.cos((1 / 6) * Math.PI) * (4 * boardSize - 2));
-
-  const cellSideLength = maxCellSideLength;
 
   const widthSvgUnits =
     cellSideLength * 0.5 + (2 * boardSize - 1) * 1.5 * cellSideLength;
-  const heightPx = 1000;
-  const widthPx = (widthSvgUnits / heightSvgUnits) * heightPx;
+
+  const heightPx = (heightSvgUnits / widthSvgUnits) * widthPx;
 
   return (
     <svg
-      aria-labelledby="game-board-title"
+      aria-label="Game Board"
       role="group"
       width={`${widthPx}px`}
       height={`${heightPx}px`}
       viewBox={`0 0 ${widthSvgUnits} ${heightSvgUnits}`}
     >
-      <title id="game-board-title">Game Board</title>
       {coordinates.map(coord => (
         <Cell
           location={coord}
-          cellSideLength={maxCellSideLength}
+          cellSideLength={cellSideLength}
           key={coord.hash()}
         />
       ))}
