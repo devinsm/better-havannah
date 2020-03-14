@@ -14,7 +14,7 @@ require('typeface-berkshire-swash');
 
 const WrappedApp: React.ComponentType = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
+  const headerFontFamily = "'Berkshire Swash', cursive";
   const theme = React.useMemo(
     () =>
       responsiveFontSizes(
@@ -24,7 +24,22 @@ const WrappedApp: React.ComponentType = () => {
           },
           typography: {
             h1: {
-              fontFamily: "'Berkshire Swash', cursive"
+              fontFamily: headerFontFamily
+            },
+            h2: {
+              fontFamily: headerFontFamily
+            },
+            h3: {
+              fontFamily: headerFontFamily
+            },
+            h4: {
+              fontFamily: headerFontFamily
+            },
+            h5: {
+              fontFamily: headerFontFamily
+            },
+            h6: {
+              fontFamily: headerFontFamily
             }
           }
         })
