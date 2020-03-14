@@ -5,6 +5,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
 
 const MAX_CONTENT_WIDTH_PX = 1100;
+const CONTENT_PADDING_PX = 16;
 const useAppStyles = makeStyles(theme =>
   createStyles({
     root: {
@@ -16,6 +17,7 @@ const useAppStyles = makeStyles(theme =>
     },
     content: {
       maxWidth: `${MAX_CONTENT_WIDTH_PX}px`,
+      padding: `${CONTENT_PADDING_PX}px`,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center'
@@ -28,7 +30,8 @@ const App: React.ComponentType = () => {
   const [boardWidthPx, setBoardWidth] = useState(MAX_CONTENT_WIDTH_PX);
   const updateBoardWidth = (): void => {
     const viewPortWidthPx = document.documentElement.clientWidth;
-    const newWidth = Math.min(MAX_CONTENT_WIDTH_PX, viewPortWidthPx);
+    const newWidth =
+      Math.min(MAX_CONTENT_WIDTH_PX, viewPortWidthPx) - 2 * CONTENT_PADDING_PX;
     setBoardWidth(newWidth);
   };
   useEffect(updateBoardWidth, []);
