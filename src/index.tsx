@@ -4,19 +4,31 @@ import App from './App';
 import { ServiceContext } from 'services/ServiceContainer';
 import GameController from 'services/GameController';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import {
+  ThemeProvider,
+  createMuiTheme,
+  responsiveFontSizes
+} from '@material-ui/core/styles';
 import * as serviceWorker from './serviceWorker';
+require('typeface-berkshire-swash');
 
 const WrappedApp: React.ComponentType = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   const theme = React.useMemo(
     () =>
-      createMuiTheme({
-        palette: {
-          type: prefersDarkMode ? 'dark' : 'light'
-        }
-      }),
+      responsiveFontSizes(
+        createMuiTheme({
+          palette: {
+            type: prefersDarkMode ? 'dark' : 'light'
+          },
+          typography: {
+            h1: {
+              fontFamily: "'Berkshire Swash', cursive"
+            }
+          }
+        })
+      ),
     [prefersDarkMode]
   );
 

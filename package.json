@@ -12,7 +12,8 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
-    "shortid": "^2.2.15"
+    "shortid": "^2.2.15",
+    "typeface-berkshire-swash": "0.0.72"
   },
   "scripts": {
     "start": "react-scripts start",
