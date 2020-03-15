@@ -11,17 +11,6 @@ function getCellHeight(cellSideLength: number): number {
   return 2 * cellSideLength * Math.cos((1 / 6) * Math.PI);
 }
 
-function getFileIndex({
-  boardSize,
-  file
-}: {
-  boardSize: number;
-  file: File;
-}): number {
-  const allFiles = utils.getFiles(boardSize);
-  return allFiles.findIndex(item => item === file);
-}
-
 /**
  *
  * @param file The file of interest.
@@ -44,7 +33,7 @@ function fileStartingCoords({
   boardSize: number;
   cellHeight: number;
 }): SvgCoordinate {
-  const fileIndex = getFileIndex({ boardSize, file });
+  const fileIndex = utils.getFileIndex({ boardSize, file });
   const halfLength = 0.5 * cellSideLength;
   const halfHeight = 0.5 * cellHeight;
 
@@ -86,7 +75,6 @@ function getSvgCoords({
   boardSize: number;
   cellCoordinates: Coordinate;
 }): SvgCoordinate {
-  const fileIndex = getFileIndex({ boardSize, file: cellCoordinates.file });
   const { x: startX, y: startY } = fileStartingCoords({
     file: cellCoordinates.file,
     cellSideLength,
@@ -94,15 +82,10 @@ function getSvgCoords({
     boardSize
   });
 
-  let firstRankInFile;
-  if (
-    getFileIndex({ boardSize, file: cellCoordinates.file }) <=
-    boardSize - 1
-  ) {
-    firstRankInFile = 1;
-  } else {
-    firstRankInFile = 1 + (fileIndex - (boardSize - 1));
-  }
+  const firstRankInFile = utils.getFirstRankInFile({
+    boardSize,
+    file: cellCoordinates.file
+  });
 
   const inset = cellCoordinates.rank - firstRankInFile;
   return {
@@ -150,12 +133,17 @@ export interface CellProps {
    * Should be given in SVG user units.
    */
   borderWidth: number;
+  /**
+   * The tab index to use on the underlying element
+   */
+  tabIndex: number;
 }
 
 const Cell: React.ComponentType<CellProps> = ({
   location,
   cellSideLength,
-  borderWidth
+  borderWidth,
+  tabIndex
 }: CellProps) => {
   const styleClasses = useCellStyles();
   const { gameController } = useContext(ServiceContext);
@@ -203,6 +191,7 @@ const Cell: React.ComponentType<CellProps> = ({
       aria-label={`Cell ${location.file}${location.rank}`}
       aria-pressed="false"
       strokeWidth={borderWidth}
+      tabIndex={tabIndex}
     />
   );
 };

@@ -13,7 +13,7 @@ test('board (base 3) renders all tiles', () => {
   const boardSizeGetter = jest.spyOn(gameController, 'boardSize', 'get');
   boardSizeGetter.mockImplementation(() => 3);
 
-  const { getByLabelText } = render(<Board />, {
+  const { getByLabelText } = render(<Board widthPx={1000} />, {
     services: { gameController }
   });
 
@@ -46,6 +46,11 @@ test('board (base 3) renders all tiles', () => {
 
   for (const cord of cords) {
     const tile = boardQueries.getByLabelText(`Cell ${cord.file}${cord.rank}`);
+    if (cord.file === 'e' && cord.rank === 3) {
+      expect(tile.getAttribute('tabindex')).toBe('0');
+    } else {
+      expect(tile.getAttribute('tabindex')).toBe('-1');
+    }
     expect(tile.getAttribute('role')).toBe('button');
     expect(tile.getAttribute('aria-pressed')).toBe('false');
   }

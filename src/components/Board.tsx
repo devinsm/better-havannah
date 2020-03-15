@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Coordinate from 'models/Coordinate';
 import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
@@ -19,11 +19,29 @@ export interface BoardProps {
   widthPx: number;
 }
 
+const getTopLeftCornerCoord = (boardSize: number): Coordinate => {
+  const files = utils.getFiles(boardSize);
+  const lastFile = files[files.length - 1];
+  return new Coordinate({
+    file: lastFile,
+    rank: utils.getFirstRankInFile({ boardSize, file: lastFile })
+  });
+};
+
 const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
   const styleClasses = useBoardStyles();
   const { gameController } = useContext(ServiceContext);
   const boardSize = gameController!.boardSize;
   const coordinates: Coordinate[] = utils.getCoordinates(boardSize);
+
+  // used for roving tab index
+  const [focusableCell, setFocusableCell] = useState(
+    getTopLeftCornerCoord(boardSize)
+  );
+  // Board size will not change during game play
+  useEffect(() => setFocusableCell(getTopLeftCornerCoord(boardSize)), [
+    boardSize
+  ]);
 
   // Maximum length of a cell side in svg user units
   // The thing to remember here is that the height of the board (excluding
@@ -58,6 +76,7 @@ const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
           cellSideLength={cellSideLength}
           borderWidth={borderWidthSvgUnits}
           key={coord.hash()}
+          tabIndex={coord.equals(focusableCell) ? 0 : -1}
         />
       ))}
     </svg>

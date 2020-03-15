@@ -58,3 +58,45 @@ export function getCoordinates(boardSize: number): Coordinate[] {
 
   return coordinates;
 }
+
+/**
+ * @param boardSize The size of the board.
+ * @param file A file on the board.
+ * @return A zero based index for the file (file 'a' gets index 0, file 'b'
+ * gets index 1, etc.)
+ */
+export function getFileIndex({
+  boardSize,
+  file
+}: {
+  boardSize: number;
+  file: File;
+}): number {
+  const allFiles = getFiles(boardSize);
+  const index = allFiles.findIndex(item => item === file);
+  if (index < 0) {
+    throw Error(`file ${file} not on board of size ${boardSize}`);
+  }
+
+  return index;
+}
+
+/**
+ * @param boardSize The size of the board.
+ * @param file A file on the board.
+ * @returns The first rank in the given file on a board of the given size.
+ */
+export function getFirstRankInFile({
+  boardSize,
+  file
+}: {
+  boardSize: number;
+  file: File;
+}): number {
+  const fileIndex = getFileIndex({ boardSize, file });
+  if (fileIndex <= boardSize - 1) {
+    return 1;
+  } else {
+    return 1 + (fileIndex - (boardSize - 1));
+  }
+}
