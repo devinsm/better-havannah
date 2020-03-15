@@ -98,7 +98,11 @@ const useCellStyles = makeStyles(theme =>
   createStyles({
     root: {
       fill: theme.palette.background.paper,
-      stroke: theme.palette.common.black
+      stroke: theme.palette.common.black,
+      '&:focus': {
+        fill: theme.palette.grey['300'],
+        outline: 0
+      }
     }
   })
 );
