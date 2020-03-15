@@ -40,6 +40,9 @@ const WrappedApp: React.ComponentType = () => {
             },
             h6: {
               fontFamily: headerFontFamily
+            },
+            subtitle1: {
+              fontSize: 1.5
             }
           }
         })
