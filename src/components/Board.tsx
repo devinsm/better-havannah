@@ -111,7 +111,36 @@ function handleCellKeyDown({
         rank: -1
       };
       break;
-    // TODO: handle other cases
+    case 'd':
+      delta = {
+        file: -1,
+        rank: 0
+      };
+      break;
+    case 'e':
+      delta = {
+        file: 0,
+        rank: 1
+      };
+      break;
+    case 'w':
+      delta = {
+        file: 1,
+        rank: 1
+      };
+      break;
+    case 'q':
+      delta = {
+        file: 1,
+        rank: 0
+      };
+      break;
+    case 'a':
+      delta = {
+        file: 0,
+        rank: -1
+      };
+      break;
   }
 
   if (delta === null) {
