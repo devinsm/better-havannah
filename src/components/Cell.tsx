@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, KeyboardEvent } from 'react';
 import Coordinate, { File } from 'models/Coordinate';
 import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
@@ -141,13 +141,15 @@ export interface CellProps {
    * The tab index to use on the underlying element
    */
   tabIndex: number;
+  onKeyDown: (event: KeyboardEvent<SVGElement>) => void;
 }
 
 const Cell: React.ComponentType<CellProps> = ({
   location,
   cellSideLength,
   borderWidth,
-  tabIndex
+  tabIndex,
+  onKeyDown
 }: CellProps) => {
   const styleClasses = useCellStyles();
   const { gameController } = useContext(ServiceContext);
@@ -196,6 +198,7 @@ const Cell: React.ComponentType<CellProps> = ({
       aria-pressed="false"
       strokeWidth={borderWidth}
       tabIndex={tabIndex}
+      onKeyDown={onKeyDown}
     />
   );
 };

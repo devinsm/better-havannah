@@ -1,15 +1,25 @@
 import React from 'react';
 import GameController from 'services/GameController';
-import { within } from '@testing-library/dom';
+import { within, fireEvent } from '@testing-library/dom';
 import Coordinate from 'models/Coordinate';
 import { createMuiTheme } from '@material-ui/core/styles';
-
+import { getCellLabel } from 'utils';
 import { render } from 'test-utils';
 // import { within } from '@testing-library/dom';
 import Board from '../Board';
 // import Coordinate from 'models/Coordinate';
 
 const theme = createMuiTheme();
+
+function getCell({
+  cord,
+  getByLabelText
+}: {
+  cord: Coordinate;
+  getByLabelText: (label: string) => HTMLElement;
+}): HTMLElement {
+  return getByLabelText(getCellLabel(cord));
+}
 
 function testInitialState({
   boardSize,
@@ -35,7 +45,7 @@ function testInitialState({
   const boardQueries = within(board);
 
   for (const cord of expectedCells) {
-    const tile = boardQueries.getByLabelText(`Cell ${cord.file}${cord.rank}`);
+    const tile = getCell({ cord, getByLabelText: boardQueries.getByLabelText });
     if (cord.file === topLeftCorner.file && cord.rank === topLeftCorner.rank) {
       expect(tile.getAttribute('tabindex')).toBe('0');
     } else {
@@ -98,4 +108,48 @@ test('base 2 board has correct initial state', () => {
   });
 
   testInitialState({ boardSize: 2, expectedCells, topLeftCorner });
+});
+
+test('can navigate down by hitting "s"', () => {
+  const gameController = new GameController();
+  const boardSizeGetter = jest.spyOn(gameController, 'boardSize', 'get');
+  boardSizeGetter.mockImplementation(() => 6);
+
+  const { getByLabelText } = render(<Board widthPx={1000} />, {
+    services: { gameController },
+    theme
+  });
+
+  const leftHandSideCords = [
+    new Coordinate({ file: 'k', rank: 6 }),
+    new Coordinate({ file: 'j', rank: 5 }),
+    new Coordinate({ file: 'i', rank: 4 }),
+    new Coordinate({ file: 'h', rank: 3 }),
+    new Coordinate({ file: 'g', rank: 2 }),
+    new Coordinate({ file: 'f', rank: 1 })
+  ];
+
+  getCell({ cord: leftHandSideCords[0], getByLabelText }).focus();
+
+  for (let i = 0; i < leftHandSideCords.length; i++) {
+    const cell = getCell({ cord: leftHandSideCords[i], getByLabelText });
+    expect(cell.getAttribute('tabindex')).toBe('0');
+    expect(cell).toHaveFocus();
+    if (i > 0) {
+      const prevCell = getCell({
+        cord: leftHandSideCords[i - 1],
+        getByLabelText
+      });
+      expect(prevCell.getAttribute('tabindex')).toBe('-1');
+    }
+
+    fireEvent.keyDown(cell, { key: 's' });
+  }
+
+  // Check that hitting s does nothing when there is no cell below
+  const lastCell = getCell({
+    cord: leftHandSideCords[leftHandSideCords.length - 1],
+    getByLabelText
+  });
+  expect(lastCell).toHaveFocus();
 });

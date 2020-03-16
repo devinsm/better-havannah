@@ -11,7 +11,7 @@ test('getFiles works for size 4 board', () => {
 });
 
 test('getCoordinates works for size 3 board', () => {
-  const coords: Coordinate[] = [
+  const cords: Coordinate[] = [
     new Coordinate({ file: 'e', rank: 3 }),
     new Coordinate({ file: 'e', rank: 4 }),
     new Coordinate({ file: 'e', rank: 5 }),
@@ -32,7 +32,7 @@ test('getCoordinates works for size 3 board', () => {
     new Coordinate({ file: 'a', rank: 2 }),
     new Coordinate({ file: 'a', rank: 3 })
   ];
-  const sortCoords = (coords: Coordinate[]): Coordinate[] =>
-    orderBy(coords, ['rank', 'file']);
-  expect(sortCoords(getCoordinates(3))).toEqual(sortCoords(coords));
+  const sortCoords = (cords: Coordinate[]): Coordinate[] =>
+    orderBy(cords, ['rank', 'file']);
+  expect(sortCoords(getCoordinates(3))).toEqual(sortCoords(cords));
 });
