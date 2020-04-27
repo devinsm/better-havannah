@@ -32,7 +32,7 @@ test('getCoordinates works for size 3 board', () => {
     new Coordinate({ file: 'a', rank: 2 }),
     new Coordinate({ file: 'a', rank: 3 })
   ];
-  const sortCoords = (cords: Coordinate[]): Coordinate[] =>
+  const sortCords = (cords: Coordinate[]): Coordinate[] =>
     orderBy(cords, ['rank', 'file']);
-  expect(sortCoords(getCoordinates(3))).toEqual(sortCoords(cords));
+  expect(sortCords(getCoordinates(3))).toEqual(sortCords(cords));
 });

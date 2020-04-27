@@ -26,7 +26,7 @@ export interface BoardProps {
   widthPx: number;
 }
 
-const getTopLeftCornerCoord = (boardSize: number): Coordinate => {
+const getTopLeftCornerCord = (boardSize: number): Coordinate => {
   const files = utils.getFiles(boardSize);
   const lastFile = files[files.length - 1];
   return new Coordinate({
@@ -97,9 +97,6 @@ function handleCellKeyDown({
     return;
   }
 
-  const allFiles = utils.getFiles(boardSize);
-  const fileIndex = utils.getFileIndex({ boardSize, file: focusedCell.file });
-
   let delta: {
     file: number;
     rank: number;
@@ -147,6 +144,9 @@ function handleCellKeyDown({
     return;
   }
 
+  const allFiles = utils.getFiles(boardSize);
+  const fileIndex = utils.getFileIndex({ boardSize, file: focusedCell.file });
+
   const newFileIndex = fileIndex + delta.file;
   const newRank = focusedCell.rank + delta.rank;
   if (
@@ -162,7 +162,7 @@ function handleCellKeyDown({
       rank: newRank
     });
     const toBeFocused = boardRootElement.querySelector(
-      `[aria-label='${utils.getCellLabel(cordToBeFocused)}']`
+      `[data-cord-hash='${cordToBeFocused.hash()}']`
     );
     if (toBeFocused) {
       (toBeFocused as HTMLButtonElement).focus();
@@ -180,10 +180,10 @@ const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
 
   // used for roving tab index
   const [focusableCell, setFocusableCell] = useState(
-    getTopLeftCornerCoord(boardSize)
+    getTopLeftCornerCord(boardSize)
   );
   // Board size will not change during game play
-  useEffect(() => setFocusableCell(getTopLeftCornerCoord(boardSize)), [
+  useEffect(() => setFocusableCell(getTopLeftCornerCord(boardSize)), [
     boardSize
   ]);
 
@@ -212,7 +212,7 @@ const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
           borderWidth={borderWidthSvgUnits}
           key={cord.hash()}
           tabIndex={cord.equals(focusableCell) ? 0 : -1}
-          onKeyDown={(event: KeyboardEvent<SVGElement>) =>
+          onKeyDown={(event: KeyboardEvent<SVGElement>): void =>
             handleCellKeyDown({
               key: event.key,
               boardRootElement: rootRef.current,

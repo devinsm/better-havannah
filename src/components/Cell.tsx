@@ -181,20 +181,21 @@ const Cell: React.ComponentType<CellProps> = ({
     y: middleRight.y
   };
 
-  const toString = (point: SvgCoordinate): string => {
+  const formatPoint = (point: SvgCoordinate): string => {
     const adjustedPoint = adjustPoint({ point, borderWidth });
     return `${adjustedPoint.x},${adjustedPoint.y}`;
   };
   return (
     <polygon
       className={styleClasses.root}
-      points={`${toString(topLeft)} ${toString(topRight)} ${toString(
+      points={`${formatPoint(topLeft)} ${formatPoint(topRight)} ${formatPoint(
         middleRight
-      )} ${toString(bottomRight)} ${toString(bottomLeft)} ${toString(
+      )} ${formatPoint(bottomRight)} ${formatPoint(bottomLeft)} ${formatPoint(
         middleLeft
       )}`}
       role="button"
       aria-label={`Cell ${location.file}${location.rank}`}
+      data-cord-hash={location.hash()}
       aria-pressed="false"
       strokeWidth={borderWidth}
       tabIndex={tabIndex}

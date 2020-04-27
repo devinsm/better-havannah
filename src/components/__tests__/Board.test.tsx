@@ -3,7 +3,6 @@ import GameController from 'services/GameController';
 import { within, fireEvent } from '@testing-library/dom';
 import Coordinate from 'models/Coordinate';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { getCellLabel } from 'utils';
 import { render } from 'test-utils';
 // import { within } from '@testing-library/dom';
 import Board from '../Board';
@@ -18,7 +17,7 @@ function getCell({
   cord: Coordinate;
   getByLabelText: (label: string) => HTMLElement;
 }): HTMLElement {
-  return getByLabelText(getCellLabel(cord));
+  return getByLabelText(`Cell ${cord.file}${cord.rank}`);
 }
 
 function testInitialState({

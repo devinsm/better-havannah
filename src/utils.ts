@@ -125,7 +125,3 @@ export function getLastRankInFile({
     return getMaxRank(boardSize) - (boardSize - 1 - fileIndex);
   }
 }
-
-export function getCellLabel(cord: Coordinate) {
-  return `Cell ${cord.file}${cord.rank}`;
-}

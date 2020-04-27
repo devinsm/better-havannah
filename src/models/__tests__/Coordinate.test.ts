@@ -36,7 +36,7 @@ test('cords with different ranks have different hash', () => {
   const cord2: Coordinate = new Coordinate({ file: 'c', rank: 5 });
   expect(cord1.hash()).not.toBe(cord2.hash());
 });
-test('cords with different rows have different hash', () => {
+test('cords with different files have different hash', () => {
   const cord1: Coordinate = new Coordinate({ file: 'e', rank: 4 });
   const cord2: Coordinate = new Coordinate({ file: 'b', rank: 4 });
   expect(cord1.hash()).not.toBe(cord2.hash());

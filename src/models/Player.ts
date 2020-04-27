@@ -10,6 +10,6 @@ export default class Player {
   }
 
   equals(other: Player): boolean {
-    return this === other;
+    return this.id === other.id;
   }
 }
