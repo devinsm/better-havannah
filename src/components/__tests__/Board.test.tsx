@@ -1,12 +1,10 @@
 import React from 'react';
 import GameController from 'services/GameController';
-import { within, fireEvent } from '@testing-library/dom';
+import { within, fireEvent, Matcher } from '@testing-library/dom';
 import Coordinate from 'models/Coordinate';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { render } from 'test-utils';
-// import { within } from '@testing-library/dom';
 import Board from '../Board';
-// import Coordinate from 'models/Coordinate';
 
 const theme = createMuiTheme();
 
@@ -15,9 +13,14 @@ function getCell({
   getByLabelText
 }: {
   cord: Coordinate;
-  getByLabelText: (label: string) => HTMLElement;
+  getByLabelText: (label: Matcher) => HTMLElement;
 }): HTMLElement {
-  return getByLabelText(`Cell ${cord.file}${cord.rank}`);
+  // The label will always start with "Cell {file}{rank}"
+  // If there is no stone, that will be the whole label
+  // If there is a stone, a non digit character will follow (testing for this
+  // case is necessary so that "Cell a1" doesn't match "Cell a11")
+  const labelPattern = RegExp(`^Cell ${cord.file}${cord.rank}(?:$|\\D)`);
+  return getByLabelText(labelPattern);
 }
 
 function testInitialState({
@@ -109,7 +112,13 @@ test('base 2 board has correct initial state', () => {
   testInitialState({ boardSize: 2, expectedCells, topLeftCorner });
 });
 
-test('can navigate down by hitting "s"', () => {
+test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
+  // a => down & left
+  // s => down
+  // d => down & right
+  // e => up & right
+  // w => up
+  // q => up & left
   const gameController = new GameController();
   const boardSizeGetter = jest.spyOn(gameController, 'boardSize', 'get');
   boardSizeGetter.mockImplementation(() => 6);
@@ -119,36 +128,221 @@ test('can navigate down by hitting "s"', () => {
     theme
   });
 
-  const leftHandSideCords = [
-    new Coordinate({ file: 'k', rank: 6 }),
-    new Coordinate({ file: 'j', rank: 5 }),
-    new Coordinate({ file: 'i', rank: 4 }),
-    new Coordinate({ file: 'h', rank: 3 }),
-    new Coordinate({ file: 'g', rank: 2 }),
-    new Coordinate({ file: 'f', rank: 1 })
+  const navPath: { expectedCurrentFocus: Coordinate; keyToPress: string }[] = [
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 6 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 6 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 6 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 6 }),
+      keyToPress: 's'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'j', rank: 5 }),
+      keyToPress: 's'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'i', rank: 4 }),
+      keyToPress: 's'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'h', rank: 3 }),
+      keyToPress: 's'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'g', rank: 2 }),
+      keyToPress: 's'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'f', rank: 1 }),
+      keyToPress: 's'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'f', rank: 1 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'e', rank: 1 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'd', rank: 1 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'c', rank: 1 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'b', rank: 1 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 1 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 1 }),
+      keyToPress: 'e'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 2 }),
+      keyToPress: 'e'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 3 }),
+      keyToPress: 'e'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 4 }),
+      keyToPress: 'e'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 5 }),
+      keyToPress: 'e'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 6 }),
+      keyToPress: 'e'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'a', rank: 6 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'b', rank: 7 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'c', rank: 8 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'd', rank: 9 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'e', rank: 10 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'f', rank: 11 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'f', rank: 11 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'g', rank: 11 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'h', rank: 11 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'i', rank: 11 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'j', rank: 11 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 11 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 11 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 10 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 9 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 8 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 7 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 6 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'k', rank: 6 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'j', rank: 6 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'i', rank: 6 }),
+      keyToPress: 'd'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'h', rank: 6 }),
+      keyToPress: 's'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'g', rank: 5 }),
+      keyToPress: 'a'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'g', rank: 4 }),
+      keyToPress: 'q'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'h', rank: 4 }),
+      keyToPress: 'w'
+    },
+    {
+      expectedCurrentFocus: new Coordinate({ file: 'i', rank: 5 }),
+      keyToPress: 'w'
+    }
   ];
 
-  getCell({ cord: leftHandSideCords[0], getByLabelText }).focus();
+  getCell({
+    cord: new Coordinate({ file: 'k', rank: 6 }),
+    getByLabelText
+  }).focus();
 
-  for (let i = 0; i < leftHandSideCords.length; i++) {
-    const cell = getCell({ cord: leftHandSideCords[i], getByLabelText });
-    expect(cell.getAttribute('tabindex')).toBe('0');
-    expect(cell).toHaveFocus();
+  for (let i = 0; i < navPath.length; i++) {
+    const current = navPath[i];
+    const expectedFocusedElement = getCell({
+      cord: current.expectedCurrentFocus,
+      getByLabelText
+    });
+    expect(expectedFocusedElement.getAttribute('tabindex')).toBe('0');
+    expect(expectedFocusedElement).toHaveFocus();
     if (i > 0) {
-      const prevCell = getCell({
-        cord: leftHandSideCords[i - 1],
-        getByLabelText
-      });
-      expect(prevCell.getAttribute('tabindex')).toBe('-1');
+      const prev = navPath[i - 1];
+      if (!prev.expectedCurrentFocus.equals(current.expectedCurrentFocus)) {
+        const prevCell = getCell({
+          cord: prev.expectedCurrentFocus,
+          getByLabelText
+        });
+        expect(prevCell.getAttribute('tabindex')).toBe('-1');
+      }
     }
 
-    fireEvent.keyDown(cell, { key: 's' });
+    fireEvent.keyDown(expectedFocusedElement, { key: current.keyToPress });
   }
-
-  // Check that hitting s does nothing when there is no cell below
-  const lastCell = getCell({
-    cord: leftHandSideCords[leftHandSideCords.length - 1],
-    getByLabelText
-  });
-  expect(lastCell).toHaveFocus();
 });
