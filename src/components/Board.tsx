@@ -11,7 +11,7 @@ import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
 import Cell from './Cell';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import * as utils from 'utils';
+import BoardModel from 'models/Board';
 
 const useBoardStyles = makeStyles(() =>
   createStyles({
@@ -26,12 +26,12 @@ export interface BoardProps {
   widthPx: number;
 }
 
-const getTopLeftCornerCord = (boardSize: number): Coordinate => {
-  const files = utils.getFiles(boardSize);
+const getTopLeftCornerCord = (boardModel: BoardModel): Coordinate => {
+  const files = boardModel.getFiles();
   const lastFile = files[files.length - 1];
   return new Coordinate({
     file: lastFile,
-    rank: utils.getFirstRankInFile({ boardSize, file: lastFile })
+    rank: boardModel.getFirstRankInFile(lastFile)
   });
 };
 
@@ -84,13 +84,13 @@ function handleCellKeyDown({
   key,
   boardRootElement,
   focusedCell,
-  boardSize,
+  boardModel,
   setFocusableCell
 }: {
   key: string;
   boardRootElement: HTMLElement | null;
   focusedCell: Coordinate;
-  boardSize: number;
+  boardModel: BoardModel;
   setFocusableCell: (cord: Coordinate) => void;
 }): void {
   if (!boardRootElement) {
@@ -144,18 +144,16 @@ function handleCellKeyDown({
     return;
   }
 
-  const allFiles = utils.getFiles(boardSize);
-  const fileIndex = utils.getFileIndex({ boardSize, file: focusedCell.file });
+  const allFiles = boardModel.getFiles();
+  const fileIndex = boardModel.getFileIndex(focusedCell.file);
 
   const newFileIndex = fileIndex + delta.file;
   const newRank = focusedCell.rank + delta.rank;
   if (
     newFileIndex >= 0 &&
     newFileIndex < allFiles.length &&
-    newRank >=
-      utils.getFirstRankInFile({ boardSize, file: allFiles[newFileIndex] }) &&
-    newRank <=
-      utils.getLastRankInFile({ boardSize, file: allFiles[newFileIndex] })
+    newRank >= boardModel.getFirstRankInFile(allFiles[newFileIndex]) &&
+    newRank <= boardModel.getLastRankInFile(allFiles[newFileIndex])
   ) {
     const cordToBeFocused = new Coordinate({
       file: allFiles[newFileIndex],
@@ -175,22 +173,22 @@ const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
   const styleClasses = useBoardStyles();
   const rootRef = useRef(null);
   const { gameController } = useContext(ServiceContext);
-  const boardSize = gameController!.boardSize;
-  const coordinates: Coordinate[] = utils.getCoordinates(boardSize);
+  const boardModel = gameController!.board;
+  const coordinates: Coordinate[] = boardModel.getCoordinates();
 
   // used for roving tab index
   const [focusableCell, setFocusableCell] = useState(
-    getTopLeftCornerCord(boardSize)
+    getTopLeftCornerCord(boardModel)
   );
   // Board size will not change during game play
-  useEffect(() => setFocusableCell(getTopLeftCornerCord(boardSize)), [
-    boardSize
+  useEffect(() => setFocusableCell(getTopLeftCornerCord(boardModel)), [
+    boardModel
   ]);
 
-  const boardDims = useMemo(() => getBoardDimensions({ boardSize, widthPx }), [
-    boardSize,
-    widthPx
-  ]);
+  const boardDims = useMemo(
+    () => getBoardDimensions({ boardSize: boardModel.size, widthPx }),
+    [boardModel, widthPx]
+  );
   const borderWidthSvgUnits = 0.5;
 
   return (
@@ -217,7 +215,7 @@ const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
               key: event.key,
               boardRootElement: rootRef.current,
               focusedCell: cord,
-              boardSize,
+              boardModel,
               setFocusableCell
             })
           }

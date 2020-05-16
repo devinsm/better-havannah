@@ -1,11 +1,10 @@
 import React from 'react';
-import GameController from 'services/GameController';
 import { within, fireEvent, Matcher } from '@testing-library/dom';
 import Coordinate from 'models/Coordinate';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { render } from 'test-utils';
 import Board from '../Board';
-
+import BoardModel from 'models/Board';
 const theme = createMuiTheme();
 
 function getCell({
@@ -32,9 +31,7 @@ function testInitialState({
   expectedCells: Coordinate[];
   topLeftCorner: Coordinate;
 }): void {
-  const gameController = new GameController();
-  const boardSizeGetter = jest.spyOn(gameController, 'boardSize', 'get');
-  boardSizeGetter.mockImplementation(() => boardSize);
+  const gameController = { board: new BoardModel(boardSize) };
 
   const { getByLabelText } = render(<Board widthPx={1000} />, {
     services: { gameController },
@@ -119,9 +116,7 @@ test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
   // e => up & right
   // w => up
   // q => up & left
-  const gameController = new GameController();
-  const boardSizeGetter = jest.spyOn(gameController, 'boardSize', 'get');
-  boardSizeGetter.mockImplementation(() => 6);
+  const gameController = { board: new BoardModel(6) };
 
   const { getByLabelText } = render(<Board widthPx={1000} />, {
     services: { gameController },

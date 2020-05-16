@@ -3,7 +3,7 @@ import Coordinate, { File } from 'models/Coordinate';
 import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import * as utils from 'utils';
+import BoardModel from 'models/Board';
 
 type SvgCoordinate = { x: number; y: number };
 
@@ -18,7 +18,7 @@ function getCellHeight(cellSideLength: number): number {
  * a cell.
  * @param cellHeight The height of a cell in SVG user units. Passed in here
  * to prevent repeated trig calculations.
- * @param boardSize The size of the board.
+ * @param boardModel The board model object.
  * @return The coordinates in SVG user space of the top left corner of the first
  * cell in the given file.
  */
@@ -26,29 +26,30 @@ function fileStartingCoords({
   file,
   cellSideLength,
   cellHeight,
-  boardSize
+  boardModel
 }: {
   file: File;
   cellSideLength: number;
-  boardSize: number;
+  boardModel: BoardModel;
   cellHeight: number;
 }): SvgCoordinate {
-  const fileIndex = utils.getFileIndex({ boardSize, file });
+  const fileIndex = boardModel.getFileIndex(file);
   const halfLength = 0.5 * cellSideLength;
   const halfHeight = 0.5 * cellHeight;
 
-  if (fileIndex >= boardSize - 1) {
+  if (fileIndex >= boardModel.size - 1) {
     return {
       x: halfLength,
       y:
-        (boardSize - 1) * halfHeight +
-        (2 * boardSize - 2 - fileIndex) * cellHeight
+        (boardModel.size - 1) * halfHeight +
+        (2 * boardModel.size - 2 - fileIndex) * cellHeight
     };
   } else {
-    const distanceFromCorner = boardSize - 1 - fileIndex;
+    const distanceFromCorner = boardModel.size - 1 - fileIndex;
     return {
       x: distanceFromCorner * 1.5 * cellSideLength + halfLength,
-      y: distanceFromCorner * halfHeight + halfHeight * (3 * boardSize - 3)
+      y:
+        distanceFromCorner * halfHeight + halfHeight * (3 * boardModel.size - 3)
     };
   }
 }
@@ -59,7 +60,7 @@ function fileStartingCoords({
  * a cell.
  * @param cellHeight The height of a cell in SVG user units. Passed in here
  * to prevent repeated trig calculations.
- * @param boardSize The size of the board.
+ * @param boardModel The board model object.
  * @param cellCoordinates The board coordinates of the cell
  * @return The SVG user coordinates of the top left corner of the cell with
  * the given board coordinates.
@@ -67,25 +68,22 @@ function fileStartingCoords({
 function getSvgCoords({
   cellSideLength,
   cellHeight,
-  boardSize,
+  boardModel,
   cellCoordinates
 }: {
   cellSideLength: number;
   cellHeight: number;
-  boardSize: number;
+  boardModel: BoardModel;
   cellCoordinates: Coordinate;
 }): SvgCoordinate {
   const { x: startX, y: startY } = fileStartingCoords({
     file: cellCoordinates.file,
     cellSideLength,
     cellHeight,
-    boardSize
+    boardModel
   });
 
-  const firstRankInFile = utils.getFirstRankInFile({
-    boardSize,
-    file: cellCoordinates.file
-  });
+  const firstRankInFile = boardModel.getFirstRankInFile(cellCoordinates.file);
 
   const inset = cellCoordinates.rank - firstRankInFile;
   return {
@@ -155,7 +153,7 @@ const Cell: React.ComponentType<CellProps> = ({
   const { gameController } = useContext(ServiceContext);
   const cellHeight = getCellHeight(cellSideLength);
   const topLeft: SvgCoordinate = getSvgCoords({
-    boardSize: gameController!.boardSize,
+    boardModel: gameController!.board,
     cellCoordinates: location,
     cellSideLength,
     cellHeight

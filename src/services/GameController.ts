@@ -1,79 +1,29 @@
-import { observable, computed, action } from 'mobx';
-import Stone from 'models/Stone';
-import Player from 'models/Player';
-import Coordinate from 'models/Coordinate';
-
-const DEFAULT_BOARD_SIZE = 6;
+import { observable, action } from 'mobx';
+import BoardModel from 'models/Board';
 
 export enum GameState {
   NOT_STARTED,
   IN_PROGRESS,
-  WON,
-  DRAW,
-  /** Other player left, internet died, etc. */
-  TERMINATED
+  COMPLETED
 }
 
 export default class GameController {
   @observable
-  private _boardSize: number = DEFAULT_BOARD_SIZE;
-
-  /**
-   * map from coordinate hash => stone at that coordinate
-   */
-  @observable
-  private _stones: Map<string, Stone> = new Map();
+  board: BoardModel;
 
   @observable
-  private _gameState: GameState = GameState.NOT_STARTED;
+  state: GameState;
 
-  /** null if this.gameState === GameState.NOT_STARTED */
-  @observable
-  private _currentPlayer: Player | null = null;
-
-  /**
-   * Tiles on the path which won the game.
-   * null unless this.gameState === GameState.WON
-   */
-  @observable
-  private _winingTiles: Map<string, Coordinate> | null = null;
-
-  @computed
-  get boardSize(): number {
-    return this._boardSize;
-  }
-
-  set boardSize(newSize: number) {
-    // TODO
-  }
-
-  @computed
-  get stones(): Map<string, Stone> {
-    return this._stones;
-  }
-
-  @computed
-  get gameState(): GameState {
-    return this._gameState;
-  }
-
-  @computed
-  get currentPlayer(): Player | null {
-    return this._currentPlayer;
-  }
-
-  @computed
-  get winningTiles(): Map<string, Coordinate> | null {
-    return this._winingTiles;
+  constructor() {
+    this.board = new BoardModel(6);
+    this.state = GameState.NOT_STARTED;
   }
 
   @action
-  placeStone(stone: Stone): void {
-    // TODO
-  }
-
-  @action
-  startGame(): void {
-    // TODO
-  }
+  setBoardSize = (newSize: number): void => {
+    if (this.state !== GameState.NOT_STARTED) {
+      throw new Error('Board size can not be changed once game has started');
+    }
+    this.board = new BoardModel(newSize);
+  };
 }
