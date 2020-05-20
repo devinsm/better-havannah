@@ -2,9 +2,46 @@ import React, { useContext, KeyboardEvent } from 'react';
 import Coordinate, { File } from 'models/Coordinate';
 import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
+import {
+  withStyles,
+  WithStyles,
+  Theme,
+  createStyles
+} from '@material-ui/core/styles';
 import BoardModel from 'models/Board';
 import Stone from './Stone';
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      fill: theme.palette.background.paper,
+      stroke: theme.palette.common.black,
+      '&:focus': {
+        fill: theme.palette.grey['300'],
+        outline: 0
+      }
+    }
+  });
+
+export interface CellProps extends WithStyles<typeof styles> {
+  location: Coordinate;
+  /**
+   * Length of each side of cell's hexagon.
+   * Should be given in SVG user units.
+   */
+  cellSideLength: number;
+  /**
+   * Width of the cell border.
+   * Should be given in SVG user units.
+   */
+  borderWidth: number;
+  /**
+   * The tab index to use on the underlying element
+   */
+  tabIndex: number;
+  onKeyDown: (event: KeyboardEvent<SVGElement>) => void;
+}
 
 type SvgCoordinate = { x: number; y: number };
 
@@ -93,19 +130,6 @@ function getSvgCoords({
   };
 }
 
-const useCellStyles = makeStyles(theme =>
-  createStyles({
-    root: {
-      fill: theme.palette.background.paper,
-      stroke: theme.palette.common.black,
-      '&:focus': {
-        fill: theme.palette.grey['300'],
-        outline: 0
-      }
-    }
-  })
-);
-
 /**
  * All points are initially calculated without taking into account the width
  * of the border. This made the math easier. This function MUST be called on
@@ -124,33 +148,14 @@ function adjustPoint({
   };
 }
 
-export interface CellProps {
-  location: Coordinate;
-  /**
-   * Length of each side of cell's hexagon.
-   * Should be given in SVG user units.
-   */
-  cellSideLength: number;
-  /**
-   * Width of the cell border.
-   * Should be given in SVG user units.
-   */
-  borderWidth: number;
-  /**
-   * The tab index to use on the underlying element
-   */
-  tabIndex: number;
-  onKeyDown: (event: KeyboardEvent<SVGElement>) => void;
-}
-
 const Cell: React.ComponentType<CellProps> = ({
   location,
   cellSideLength,
   borderWidth,
   tabIndex,
+  classes,
   onKeyDown
 }: CellProps) => {
-  const styleClasses = useCellStyles();
   const { gameController } = useContext(ServiceContext);
   const stoneForTile = gameController!.getStone(location);
   const cellHeight = getCellHeight(cellSideLength);
@@ -192,7 +197,7 @@ const Cell: React.ComponentType<CellProps> = ({
   };
   return (
     <g
-      className={styleClasses.root}
+      className={classes.root}
       role="button"
       aria-label={`Cell ${location.file}${location.rank}`}
       data-cord-hash={location.hash()}
@@ -221,4 +226,4 @@ const Cell: React.ComponentType<CellProps> = ({
   );
 };
 
-export default observer(Cell);
+export default withStyles(styles)(observer(Cell));

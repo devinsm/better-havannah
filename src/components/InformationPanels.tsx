@@ -7,15 +7,43 @@ import {
   Grid,
   Box
 } from '@material-ui/core';
-import { withStyles, createStyles, makeStyles } from '@material-ui/core/styles';
+import {
+  withStyles,
+  createStyles,
+  WithStyles,
+  Theme
+} from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-export interface InformationPanelsProps {
-  classes: {
-    root: string;
-    details: string;
-  };
-}
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
+      marginBottom: theme.spacing(6),
+      marginTop: theme.spacing(4)
+    },
+    details: {
+      fontSize: theme.typography.subtitle1.fontSize
+    },
+    shortcutList: {
+      listStyle: 'none',
+      margin: 0,
+      padding: 0
+    },
+    shortcutListItem: {
+      marginBottom: '0.5rem'
+    },
+    shortcutKey: {
+      background: 'rgb(242, 242, 242)',
+      display: 'inline-block',
+      fontFamily: "'Roboto Mono', monospace",
+      marginRight: theme.spacing(1),
+      paddingRight: theme.spacing(1),
+      paddingLeft: theme.spacing(1)
+    }
+  });
+export type InformationPanelsProps = WithStyles<typeof styles>;
 
 const SHORTCUTS: { key: string; actionDescription: string }[] = [
   {
@@ -44,31 +72,9 @@ const SHORTCUTS: { key: string; actionDescription: string }[] = [
   }
 ];
 
-const useShortcutStyles = makeStyles(theme =>
-  createStyles({
-    list: {
-      listStyle: 'none',
-      margin: 0,
-      padding: 0
-    },
-    listItem: {
-      marginBottom: '0.5rem'
-    },
-    shortCutKey: {
-      background: 'rgb(242, 242, 242)',
-      display: 'inline-block',
-      fontFamily: "'Roboto Mono', monospace",
-      marginRight: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      paddingLeft: theme.spacing(1)
-    }
-  })
-);
-
 const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
   classes
 }: InformationPanelsProps) => {
-  const shortcutStyleClasses = useShortcutStyles();
   return (
     <div className={classes.root}>
       <ExpansionPanel aria-controls="rules-content" id="rules-header">
@@ -119,15 +125,10 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
               <Box component="p" mt={0}>
                 The following shortcuts can be used to navigate the board:
               </Box>
-              <ul className={shortcutStyleClasses.list}>
+              <ul className={classes.shortcutList}>
                 {SHORTCUTS.map(shortCut => (
-                  <li
-                    key={shortCut.key}
-                    className={shortcutStyleClasses.listItem}
-                  >
-                    <span className={shortcutStyleClasses.shortCutKey}>
-                      {shortCut.key}
-                    </span>
+                  <li key={shortCut.key} className={classes.shortcutListItem}>
+                    <span className={classes.shortcutKey}>{shortCut.key}</span>
                     <span>{shortCut.actionDescription}</span>
                   </li>
                 ))}
@@ -140,15 +141,4 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
   );
 };
 
-export default withStyles(theme =>
-  createStyles({
-    root: {
-      width: '100%',
-      marginBottom: theme.spacing(6),
-      marginTop: theme.spacing(4)
-    },
-    details: {
-      fontSize: theme.typography.subtitle1.fontSize
-    }
-  })
-)(InformationPanels);
+export default withStyles(styles)(InformationPanels);

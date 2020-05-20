@@ -10,19 +10,19 @@ import Coordinate from 'models/Coordinate';
 import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
 import Cell from './Cell';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
+import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import BoardModel from 'models/Board';
 
-const useBoardStyles = makeStyles(() =>
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const styles = () =>
   createStyles({
     root: {
       filter:
         'drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.2)) drop-shadow(0px 8px 10px rgba(0,0,0,0.14)) drop-shadow(0px 3px 14px rgba(0,0,0,0.12))'
     }
-  })
-);
+  });
 
-export interface BoardProps {
+export interface BoardProps extends WithStyles<typeof styles> {
   widthPx: number;
 }
 
@@ -169,8 +169,10 @@ function handleCellKeyDown({
   }
 }
 
-const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
-  const styleClasses = useBoardStyles();
+const Board: React.ComponentType<BoardProps> = ({
+  widthPx,
+  classes
+}: BoardProps) => {
   const rootRef = useRef(null);
   const { gameController } = useContext(ServiceContext);
   const boardModel = gameController!.board;
@@ -193,7 +195,7 @@ const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
 
   return (
     <svg
-      className={styleClasses.root}
+      className={classes.root}
       aria-label="Game Board"
       role="group"
       width={`${boardDims.px.width}px`}
@@ -225,4 +227,4 @@ const Board: React.ComponentType<BoardProps> = ({ widthPx }: BoardProps) => {
   );
 };
 
-export default observer(Board);
+export default withStyles(styles)(observer(Board));
