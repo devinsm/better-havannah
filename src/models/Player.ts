@@ -1,12 +1,8 @@
-import shortid from 'shortid';
-
 export default class Player {
-  stoneColor: string; // CSS color string
-  readonly id: string;
+  readonly id: 'one' | 'two';
 
-  constructor({ stoneColor }: { stoneColor: string }) {
-    this.stoneColor = stoneColor;
-    this.id = shortid.generate();
+  constructor(id: 'one' | 'two') {
+    this.id = id;
   }
 
   equals(other: Player): boolean {

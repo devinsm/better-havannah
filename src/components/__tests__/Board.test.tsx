@@ -5,7 +5,21 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { render } from 'test-utils';
 import Board from '../Board';
 import BoardModel from 'models/Board';
+import Player from 'models/Player';
+import GameController, { GameState } from 'services/GameController';
 const theme = createMuiTheme();
+
+const MockGameController = (boardSize: number): GameController =>
+  (({
+    board: new BoardModel(boardSize),
+    state: GameState.IN_PROGRESS,
+    us: new Player('one'),
+    them: new Player('two'),
+    currentPlayer: new Player('one'),
+    setBoardSize: jest.fn(),
+    placeStone: jest.fn(),
+    getStone: jest.fn()
+  } as unknown) as GameController);
 
 function getCell({
   cord,
@@ -31,10 +45,8 @@ function testInitialState({
   expectedCells: Coordinate[];
   topLeftCorner: Coordinate;
 }): void {
-  const gameController = { board: new BoardModel(boardSize) };
-
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController },
+    services: { gameController: MockGameController(boardSize) },
     theme
   });
 
@@ -52,9 +64,6 @@ function testInitialState({
     }
     expect(tile.getAttribute('role')).toBe('button');
     expect(tile.getAttribute('aria-pressed')).toBe('false');
-    expect(tile).toHaveStyle(`
-      fill: ${theme.palette.background.paper};
-    `);
   }
 }
 // Disabled jest/expect-expect since the assertions are in a helper function
@@ -116,10 +125,8 @@ test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
   // e => up & right
   // w => up
   // q => up & left
-  const gameController = { board: new BoardModel(6) };
-
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController },
+    services: { gameController: MockGameController(6) },
     theme
   });
 
@@ -340,4 +347,25 @@ test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
 
     fireEvent.keyDown(expectedFocusedElement, { key: current.keyToPress });
   }
+});
+
+test('The game controller is notified when the user places a stone', () => {
+  const mockController = MockGameController(5);
+  const { getByLabelText } = render(<Board widthPx={1000} />, {
+    services: { gameController: mockController },
+    theme
+  });
+
+  const cordToClick = new Coordinate({ file: 'e', rank: 6 });
+
+  const cellToClick = getCell({
+    cord: cordToClick,
+    getByLabelText
+  });
+  fireEvent.click(cellToClick);
+  const mockPlaceStone = mockController.placeStone as jest.Mock;
+  expect(mockPlaceStone.mock.calls.length).toBe(1);
+  expect(mockPlaceStone.mock.calls[0].length).toBe(1);
+  const cordWhereStonePlaced: Coordinate = mockPlaceStone.mock.calls[0][0];
+  expect(cordWhereStonePlaced.equals(cordToClick)).toBeTruthy();
 });

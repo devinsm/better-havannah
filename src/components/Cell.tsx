@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { ServiceContext } from 'services/ServiceContainer';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import BoardModel from 'models/Board';
+import Stone from './Stone';
 
 type SvgCoordinate = { x: number; y: number };
 
@@ -151,6 +152,7 @@ const Cell: React.ComponentType<CellProps> = ({
 }: CellProps) => {
   const styleClasses = useCellStyles();
   const { gameController } = useContext(ServiceContext);
+  const stoneForTile = gameController!.getStone(location);
   const cellHeight = getCellHeight(cellSideLength);
   const topLeft: SvgCoordinate = getSvgCoords({
     boardModel: gameController!.board,
@@ -179,26 +181,43 @@ const Cell: React.ComponentType<CellProps> = ({
     y: middleRight.y
   };
 
+  const center: SvgCoordinate = {
+    x: topLeft.x + 0.5 * cellSideLength,
+    y: topLeft.y + 0.5 * cellHeight
+  };
+
   const formatPoint = (point: SvgCoordinate): string => {
     const adjustedPoint = adjustPoint({ point, borderWidth });
     return `${adjustedPoint.x},${adjustedPoint.y}`;
   };
   return (
-    <polygon
+    <g
       className={styleClasses.root}
-      points={`${formatPoint(topLeft)} ${formatPoint(topRight)} ${formatPoint(
-        middleRight
-      )} ${formatPoint(bottomRight)} ${formatPoint(bottomLeft)} ${formatPoint(
-        middleLeft
-      )}`}
       role="button"
       aria-label={`Cell ${location.file}${location.rank}`}
       data-cord-hash={location.hash()}
       aria-pressed="false"
-      strokeWidth={borderWidth}
       tabIndex={tabIndex}
       onKeyDown={onKeyDown}
-    />
+      onClick={() => gameController!.placeStone(location)}
+    >
+      <polygon
+        points={`${formatPoint(topLeft)} ${formatPoint(topRight)} ${formatPoint(
+          middleRight
+        )} ${formatPoint(bottomRight)} ${formatPoint(bottomLeft)} ${formatPoint(
+          middleLeft
+        )}`}
+        strokeWidth={borderWidth}
+      />
+      {stoneForTile && (
+        <Stone
+          center={adjustPoint({ point: center, borderWidth })}
+          radius={0.5 * cellSideLength}
+          borderWidth={borderWidth * 0.25}
+          player={stoneForTile.owner}
+        />
+      )}
+    </g>
   );
 };
 
