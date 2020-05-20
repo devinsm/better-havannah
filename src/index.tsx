@@ -10,6 +10,7 @@ import {
   responsiveFontSizes
 } from '@material-ui/core/styles';
 import * as serviceWorker from './serviceWorker';
+import 'mobx-react/batchingForReactDom';
 require('typeface-berkshire-swash');
 
 const WrappedApp: React.ComponentType = () => {
@@ -42,7 +43,7 @@ const WrappedApp: React.ComponentType = () => {
               fontFamily: headerFontFamily
             },
             subtitle1: {
-              fontSize: 1.5
+              fontSize: '1.5rem'
             }
           }
         })
