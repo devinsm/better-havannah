@@ -213,6 +213,7 @@ const Cell: React.ComponentType<CellProps> = ({
       tabIndex={tabIndex}
       onKeyDown={(event: React.KeyboardEvent<SVGElement>): void => {
         if (['Enter', ' '].includes(event.key)) {
+          event.preventDefault();
           handleClick();
         }
         onKeyDown(event);

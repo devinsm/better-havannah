@@ -59,7 +59,7 @@ export default class GameController {
     !!(
       this.state === GameState.IN_PROGRESS &&
       this.currentPlayer.equals(this.us) &&
-      this._getStone(cord)
+      !this._getStone(cord)
     );
 
   // Needed to update ui reactively
