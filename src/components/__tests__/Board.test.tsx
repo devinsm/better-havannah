@@ -350,12 +350,16 @@ test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
   }
 });
 
-function clickCell({
+function testPlaceStone({
   gameController,
-  cord
+  cord,
+  fireClickEvent,
+  shouldSucceed
 }: {
   gameController: GameController;
   cord: Coordinate;
+  fireClickEvent: (element: Element | Node) => void;
+  shouldSucceed: boolean;
 }): void {
   const { getByLabelText } = render(<Board widthPx={1000} />, {
     services: { gameController },
@@ -366,30 +370,80 @@ function clickCell({
     cord,
     getByLabelText
   });
-  fireEvent.click(cellToClick);
+  fireClickEvent(cellToClick);
+
+  const mockPlaceStone = gameController.placeStone as jest.Mock;
+  if (shouldSucceed) {
+    expect(mockPlaceStone.mock.calls.length).toBe(1);
+    expect(mockPlaceStone.mock.calls[0].length).toBe(1);
+    const cordWhereStonePlaced: Coordinate = mockPlaceStone.mock.calls[0][0];
+    expect(cordWhereStonePlaced.equals(cord)).toBeTruthy();
+  } else {
+    expect(mockPlaceStone.mock.calls.length).toBe(0);
+  }
 }
 
+// eslint-disable-next-line jest/expect-expect
 test('The game controller is notified when the user places a stone', () => {
-  const mockController = MockGameController(5);
-  (mockController.canPlaceStone as jest.Mock).mockImplementation(() => true);
+  const gameController = MockGameController(5);
+  (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
 
-  const cordToClick = new Coordinate({ file: 'e', rank: 6 });
-  clickCell({ gameController: mockController, cord: cordToClick });
-
-  const mockPlaceStone = mockController.placeStone as jest.Mock;
-  expect(mockPlaceStone.mock.calls.length).toBe(1);
-  expect(mockPlaceStone.mock.calls[0].length).toBe(1);
-  const cordWhereStonePlaced: Coordinate = mockPlaceStone.mock.calls[0][0];
-  expect(cordWhereStonePlaced.equals(cordToClick)).toBeTruthy();
+  testPlaceStone({
+    gameController,
+    cord: new Coordinate({ file: 'e', rank: 6 }),
+    fireClickEvent: fireEvent.click,
+    shouldSucceed: true
+  });
 });
 
+// eslint-disable-next-line jest/expect-expect
 test('Does not place stone when disabled', () => {
-  const mockController = MockGameController(5);
-  (mockController.canPlaceStone as jest.Mock).mockImplementation(() => false);
-  clickCell({
-    gameController: mockController,
-    cord: new Coordinate({ file: 'e', rank: 6 })
+  const gameController = MockGameController(5);
+  (gameController.canPlaceStone as jest.Mock).mockImplementation(() => false);
+
+  testPlaceStone({
+    gameController,
+    cord: new Coordinate({ file: 'e', rank: 6 }),
+    fireClickEvent: fireEvent.click,
+    shouldSucceed: false
   });
-  const mockPlaceStone = mockController.placeStone as jest.Mock;
-  expect(mockPlaceStone.mock.calls.length).toBe(0);
+});
+
+// eslint-disable-next-line jest/expect-expect
+test('can click cell using enter key', () => {
+  const gameController = MockGameController(5);
+  (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
+
+  testPlaceStone({
+    gameController,
+    cord: new Coordinate({ file: 'c', rank: 5 }),
+    fireClickEvent: el => fireEvent.keyDown(el, { key: 'Enter' }),
+    shouldSucceed: true
+  });
+});
+
+// eslint-disable-next-line jest/expect-expect
+test('can click cell using space bar', () => {
+  const gameController = MockGameController(5);
+  (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
+
+  testPlaceStone({
+    gameController,
+    cord: new Coordinate({ file: 'c', rank: 5 }),
+    fireClickEvent: el => fireEvent.keyDown(el, { key: ' ' }),
+    shouldSucceed: true
+  });
+});
+
+// eslint-disable-next-line jest/expect-expect
+test('hitting other keys does not place stone', () => {
+  const gameController = MockGameController(5);
+  (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
+
+  testPlaceStone({
+    gameController,
+    cord: new Coordinate({ file: 'c', rank: 5 }),
+    fireClickEvent: el => fireEvent.keyDown(el, { key: 'x' }),
+    shouldSucceed: false
+  });
 });

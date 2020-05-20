@@ -211,7 +211,12 @@ const Cell: React.ComponentType<CellProps> = ({
       data-cord-hash={location.hash()}
       aria-pressed="false"
       tabIndex={tabIndex}
-      onKeyDown={onKeyDown}
+      onKeyDown={(event: React.KeyboardEvent<SVGElement>): void => {
+        if (['Enter', ' '].includes(event.key)) {
+          handleClick();
+        }
+        onKeyDown(event);
+      }}
       onClick={(): void => handleClick()}
       aria-disabled={disabled}
     >
