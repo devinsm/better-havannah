@@ -1,7 +1,7 @@
 import React, { useContext, KeyboardEvent } from 'react';
 import Coordinate, { File } from 'models/Coordinate';
 import { observer } from 'mobx-react';
-import { ServiceContext } from 'services/ServiceContainer';
+import { ServiceContext, Services } from 'services/ServiceContainer';
 import {
   withStyles,
   WithStyles,
@@ -156,11 +156,19 @@ const Cell: React.ComponentType<CellProps> = ({
   classes,
   onKeyDown
 }: CellProps) => {
-  const { gameController } = useContext(ServiceContext);
-  const stoneForTile = gameController!.getStone(location);
+  const { gameController } = useContext(ServiceContext) as Services;
+  const stoneForTile = gameController.getStone(location);
+  const disabled = !gameController.canPlaceStone(location);
   const cellHeight = getCellHeight(cellSideLength);
+
+  const handleClick = (): void => {
+    if (!disabled) {
+      gameController.placeStone(location);
+    }
+  };
+
   const topLeft: SvgCoordinate = getSvgCoords({
-    boardModel: gameController!.board,
+    boardModel: gameController.board,
     cellCoordinates: location,
     cellSideLength,
     cellHeight
@@ -204,7 +212,8 @@ const Cell: React.ComponentType<CellProps> = ({
       aria-pressed="false"
       tabIndex={tabIndex}
       onKeyDown={onKeyDown}
-      onClick={() => gameController!.placeStone(location)}
+      onClick={(): void => handleClick()}
+      aria-disabled={disabled}
     >
       <polygon
         points={`${formatPoint(topLeft)} ${formatPoint(topRight)} ${formatPoint(

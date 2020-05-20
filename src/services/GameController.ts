@@ -46,20 +46,32 @@ export default class GameController {
     this._board = new BoardModel(newSize);
   };
 
+  private _getStone = (cord: Coordinate): Stone | undefined =>
+    this._stones.get(cord.hash());
+
+  // Needed to update ui reactively
+  // can only be called within a Mobx reactive context
   getStone = createTransformer((cord: Coordinate): Stone | undefined => {
-    return this._stones.get(cord.hash());
+    return this._getStone(cord);
+  });
+
+  private _canPlaceStone = (cord: Coordinate): boolean =>
+    !!(
+      this.state === GameState.IN_PROGRESS &&
+      this.currentPlayer.equals(this.us) &&
+      this._getStone(cord)
+    );
+
+  // Needed to update ui reactively
+  // can only be called within a Mobx reactive context
+  canPlaceStone = createTransformer((cord: Coordinate): boolean => {
+    return this._canPlaceStone(cord);
   });
 
   @action
   placeStone = (cord: Coordinate): void => {
-    if (this.state !== GameState.IN_PROGRESS) {
-      throw new Error('Can not place stone when game not in progress');
-    }
-    if (!this.currentPlayer.equals(this.us)) {
-      throw new Error("Can not place stone when it's not your turn!");
-    }
-    if (this._stones.get(cord.hash())) {
-      throw new Error(`There is already a stone at ${cord.file}${cord.rank}`);
+    if (!this._canPlaceStone(cord)) {
+      throw new Error(`Can not place stone at ${cord.file}${cord.rank}`);
     }
     // TODO: hit backend
     this._stones.set(

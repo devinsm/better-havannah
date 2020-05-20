@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import Coordinate from 'models/Coordinate';
 import { observer } from 'mobx-react';
-import { ServiceContext } from 'services/ServiceContainer';
+import { ServiceContext, Services } from 'services/ServiceContainer';
 import Cell from './Cell';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import BoardModel from 'models/Board';
@@ -174,8 +174,8 @@ const Board: React.ComponentType<BoardProps> = ({
   classes
 }: BoardProps) => {
   const rootRef = useRef(null);
-  const { gameController } = useContext(ServiceContext);
-  const boardModel = gameController!.board;
+  const { gameController } = useContext(ServiceContext) as Services;
+  const boardModel = gameController.board;
   const coordinates: Coordinate[] = boardModel.getCoordinates();
 
   // used for roving tab index

@@ -18,6 +18,7 @@ const MockGameController = (boardSize: number): GameController =>
     currentPlayer: new Player('one'),
     setBoardSize: jest.fn(),
     placeStone: jest.fn(),
+    canPlaceStone: jest.fn(),
     getStone: jest.fn()
   } as unknown) as GameController);
 
@@ -349,23 +350,46 @@ test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
   }
 });
 
-test('The game controller is notified when the user places a stone', () => {
-  const mockController = MockGameController(5);
+function clickCell({
+  gameController,
+  cord
+}: {
+  gameController: GameController;
+  cord: Coordinate;
+}): void {
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController: mockController },
+    services: { gameController },
     theme
   });
 
-  const cordToClick = new Coordinate({ file: 'e', rank: 6 });
-
   const cellToClick = getCell({
-    cord: cordToClick,
+    cord,
     getByLabelText
   });
   fireEvent.click(cellToClick);
+}
+
+test('The game controller is notified when the user places a stone', () => {
+  const mockController = MockGameController(5);
+  (mockController.canPlaceStone as jest.Mock).mockImplementation(() => true);
+
+  const cordToClick = new Coordinate({ file: 'e', rank: 6 });
+  clickCell({ gameController: mockController, cord: cordToClick });
+
   const mockPlaceStone = mockController.placeStone as jest.Mock;
   expect(mockPlaceStone.mock.calls.length).toBe(1);
   expect(mockPlaceStone.mock.calls[0].length).toBe(1);
   const cordWhereStonePlaced: Coordinate = mockPlaceStone.mock.calls[0][0];
   expect(cordWhereStonePlaced.equals(cordToClick)).toBeTruthy();
+});
+
+test('Does not place stone when disabled', () => {
+  const mockController = MockGameController(5);
+  (mockController.canPlaceStone as jest.Mock).mockImplementation(() => false);
+  clickCell({
+    gameController: mockController,
+    cord: new Coordinate({ file: 'e', rank: 6 })
+  });
+  const mockPlaceStone = mockController.placeStone as jest.Mock;
+  expect(mockPlaceStone.mock.calls.length).toBe(0);
 });
