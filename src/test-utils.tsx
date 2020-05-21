@@ -53,17 +53,22 @@ export { customRender as render };
 // Mock services which can be used and injected by tests
 export const MockGameController = ({
   boardSize,
-  state
+  state,
+  currentPlayer,
+  winner
 }: {
   boardSize: number;
   state?: GameState;
+  currentPlayer?: Player;
+  winner?: Player | null;
 }): GameController =>
   (({
     board: new Board(boardSize),
     state: state || GameState.IN_PROGRESS,
     us: new Player('human'),
     them: new Player('bot'),
-    currentPlayer: new Player('human'),
+    currentPlayer: currentPlayer || new Player('human'),
+    winner: winner || null,
     setBoardSize: jest.fn(),
     placeStone: jest.fn(),
     canPlaceStone: jest.fn(),

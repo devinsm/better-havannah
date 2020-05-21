@@ -11,11 +11,12 @@ export enum GameState {
   COMPLETED
 }
 
+// Putting state in private variables on accessible via computed getters
+// prevents client code from accidentally messing up internal state.
 export default class GameController {
   @observable
   private _board: BoardModel;
 
-  // Prevents client code from directly setting board
   @computed({ keepAlive: true })
   get board(): BoardModel {
     return this._board;
@@ -24,7 +25,6 @@ export default class GameController {
   @observable
   private _state: GameState;
 
-  // Prevents client code from directly setting game state
   @computed({ keepAlive: true })
   get state(): GameState {
     return this._state;
@@ -42,7 +42,20 @@ export default class GameController {
   readonly them: Player = new Player('bot');
 
   @observable
-  currentPlayer: Player = this.us;
+  private _currentPlayer: Player = this.us;
+
+  @computed({ keepAlive: true })
+  get currentPlayer(): Player {
+    return this._currentPlayer;
+  }
+
+  @observable
+  private _winner: Player | null = null;
+
+  @computed({ keepAlive: true })
+  get winner(): Player | null {
+    return this._winner;
+  }
 
   @observable
   private readonly _stones: Map<string, Stone> = new Map();
@@ -63,8 +76,7 @@ export default class GameController {
   private _getStone = (cord: Coordinate): Stone | undefined =>
     this._stones.get(cord.hash());
 
-  // Needed to update ui reactively
-  // can only be called within a Mobx reactive context
+  /** should only be called within a Mobx reactive context */
   getStone = createTransformer((cord: Coordinate): Stone | undefined => {
     return this._getStone(cord);
   });
@@ -72,12 +84,11 @@ export default class GameController {
   private _canPlaceStone = (cord: Coordinate): boolean =>
     !!(
       this._state === GameState.IN_PROGRESS &&
-      this.currentPlayer.equals(this.us) &&
+      this._currentPlayer.equals(this.us) &&
       !this._getStone(cord)
     );
 
-  // Needed to update ui reactively
-  // can only be called within a Mobx reactive context
+  /** should only be called within a Mobx reactive context */
   canPlaceStone = createTransformer((cord: Coordinate): boolean => {
     return this._canPlaceStone(cord);
   });
@@ -92,5 +103,6 @@ export default class GameController {
       cord.hash(),
       new Stone({ location: cord, owner: this.us })
     );
+    this._currentPlayer = this.them;
   };
 }

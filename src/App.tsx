@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 import { ServiceContext, Services } from 'services/ServiceContainer';
 import Board from 'components/Board';
 import InformationPanels from 'components/InformationPanels';
+import MessageBoard from 'components/MessageBoard';
 import ConfigForm from 'components/ConfigForm';
 import { GameState } from 'services/GameController';
 
@@ -33,6 +34,9 @@ const useAppStyles = makeStyles(theme =>
       marginTop: theme.spacing(4)
     },
     configForm: {
+      marginBottom: theme.spacing(8)
+    },
+    messageBoard: {
       marginBottom: theme.spacing(8)
     }
   })
@@ -61,8 +65,10 @@ const App: React.ComponentType = () => {
       <div className={classes.content}>
         <Typography variant="h1">Havannah</Typography>
         <InformationPanels classes={{ root: classes.infoPanels }} />
-        {gameController.state === GameState.NOT_STARTED && (
+        {gameController.state === GameState.NOT_STARTED ? (
           <ConfigForm classes={{ root: classes.configForm }} />
+        ) : (
+          <MessageBoard classes={{ root: classes.messageBoard }} />
         )}
         <Board widthPx={boardWidthPx} />
       </div>
