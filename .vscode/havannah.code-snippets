@@ -1,0 +1,29 @@
+{
+  "component": {
+    "scope": "typescriptreact",
+    "prefix": "havannah-component",
+    "body": [
+      "import React, { useContext } from 'react';",
+      "import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';",
+      "import { observer } from 'mobx-react';",
+      "",
+      "import { ServiceContext, Services } from 'services/ServiceContainer';",
+      "",
+      "// eslint-disable-next-line @typescript-eslint/explicit-function-return-type",
+      "const styles = () => createStyles({});",
+      "",
+      "export interface ${1:Component}Props extends WithStyles<typeof styles> {",
+      "\t${2}",
+      "}",
+      "",
+      "const ${1}: React.ComponentType<${1}Props> = ({",
+      "\tclasses",
+      "}: ${1}Props) => {",
+      "\tconst services = useContext(ServiceContext) as Services;",
+      "\treturn <p>Hello from ${1}!</p>;",
+      "};",
+      "",
+      "export default withStyles(styles)(observer(${1}));"
+    ]
+  }
+}

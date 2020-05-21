@@ -2,26 +2,12 @@ import React from 'react';
 import { within, fireEvent, Matcher } from '@testing-library/dom';
 import Coordinate from 'models/Coordinate';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { render } from 'test-utils';
+import { render, MockGameController } from 'test-utils';
 import Board from '../Board';
-import BoardModel from 'models/Board';
 import Player from 'models/Player';
-import GameController, { GameState } from 'services/GameController';
+import GameController from 'services/GameController';
 import Stone from 'models/Stone';
 const theme = createMuiTheme();
-
-const MockGameController = (boardSize: number): GameController =>
-  (({
-    board: new BoardModel(boardSize),
-    state: GameState.IN_PROGRESS,
-    us: new Player('human'),
-    them: new Player('bot'),
-    currentPlayer: new Player('human'),
-    setBoardSize: jest.fn(),
-    placeStone: jest.fn(),
-    canPlaceStone: jest.fn(),
-    getStone: jest.fn()
-  } as unknown) as GameController);
 
 function getCell({
   cord,

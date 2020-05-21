@@ -4,6 +4,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
 import InformationPanels from 'components/InformationPanels';
+import ConfigForm from 'components/ConfigForm';
 
 const MAX_CONTENT_WIDTH_PX = 1100;
 const CONTENT_PADDING_PX = 16;
@@ -48,6 +49,7 @@ const App: React.ComponentType = () => {
       <div className={styleClasses.content}>
         <Typography variant="h1">Havannah</Typography>
         <InformationPanels />
+        <ConfigForm />
         <Board widthPx={boardWidthPx} />
       </div>
     </div>
