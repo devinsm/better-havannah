@@ -28,20 +28,13 @@ const WrappedApp: React.ComponentType = () => {
               fontFamily: headerFontFamily
             },
             h2: {
-              fontFamily: headerFontFamily
+              fontFamily: headerFontFamily,
+              fontSize: '2rem'
             },
-            h3: {
-              fontFamily: headerFontFamily
-            },
-            h4: {
-              fontFamily: headerFontFamily
-            },
-            h5: {
-              fontFamily: headerFontFamily
-            },
-            h6: {
-              fontFamily: headerFontFamily
-            },
+            h3: {},
+            h4: {},
+            h5: {},
+            h6: {},
             subtitle1: {
               fontSize: '1.5rem'
             }

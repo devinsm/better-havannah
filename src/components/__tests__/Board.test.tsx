@@ -34,7 +34,7 @@ function testInitialState({
   topLeftCorner: Coordinate;
 }): void {
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController: MockGameController(boardSize) },
+    services: { gameController: MockGameController({ boardSize }) },
     theme
   });
 
@@ -114,7 +114,7 @@ test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
   // w => up
   // q => up & left
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController: MockGameController(6) },
+    services: { gameController: MockGameController({ boardSize: 6 }) },
     theme
   });
 
@@ -372,7 +372,7 @@ function testPlaceStone({
 
 // eslint-disable-next-line jest/expect-expect
 test('The game controller is notified when the user places a stone', () => {
-  const gameController = MockGameController(5);
+  const gameController = MockGameController({ boardSize: 5 });
   (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
 
   testPlaceStone({
@@ -385,7 +385,7 @@ test('The game controller is notified when the user places a stone', () => {
 
 // eslint-disable-next-line jest/expect-expect
 test('Does not place stone when disabled', () => {
-  const gameController = MockGameController(5);
+  const gameController = MockGameController({ boardSize: 5 });
   (gameController.canPlaceStone as jest.Mock).mockImplementation(() => false);
 
   testPlaceStone({
@@ -398,7 +398,7 @@ test('Does not place stone when disabled', () => {
 
 // eslint-disable-next-line jest/expect-expect
 test('can click cell using enter key', () => {
-  const gameController = MockGameController(5);
+  const gameController = MockGameController({ boardSize: 5 });
   (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
 
   testPlaceStone({
@@ -411,7 +411,7 @@ test('can click cell using enter key', () => {
 
 // eslint-disable-next-line jest/expect-expect
 test('can click cell using space bar', () => {
-  const gameController = MockGameController(5);
+  const gameController = MockGameController({ boardSize: 5 });
   (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
 
   testPlaceStone({
@@ -424,7 +424,7 @@ test('can click cell using space bar', () => {
 
 // eslint-disable-next-line jest/expect-expect
 test('hitting other keys does not place stone', () => {
-  const gameController = MockGameController(5);
+  const gameController = MockGameController({ boardSize: 5 });
   (gameController.canPlaceStone as jest.Mock).mockImplementation(() => true);
 
   testPlaceStone({
@@ -436,7 +436,7 @@ test('hitting other keys does not place stone', () => {
 });
 
 test('stones shown appropriately', () => {
-  const gameController = MockGameController(5);
+  const gameController = MockGameController({ boardSize: 5 });
   const cordWithOurStone = new Coordinate({ file: 'c', rank: 4 });
   const cordWithTheirStone = new Coordinate({ file: 'a', rank: 2 });
   const cordWithNoStone = new Coordinate({ file: 'e', rank: 4 });

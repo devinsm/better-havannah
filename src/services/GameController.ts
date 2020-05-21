@@ -22,7 +22,21 @@ export default class GameController {
   }
 
   @observable
-  state: GameState;
+  private _state: GameState;
+
+  // Prevents client code from directly setting game state
+  @computed({ keepAlive: true })
+  get state(): GameState {
+    return this._state;
+  }
+
+  @action
+  startGame = (): void => {
+    if (this._state !== GameState.NOT_STARTED) {
+      throw Error('Game has already started');
+    }
+    this._state = GameState.IN_PROGRESS;
+  };
 
   readonly us: Player = new Player('human');
   readonly them: Player = new Player('bot');
@@ -35,12 +49,12 @@ export default class GameController {
 
   constructor() {
     this._board = new BoardModel(6);
-    this.state = GameState.NOT_STARTED;
+    this._state = GameState.NOT_STARTED;
   }
 
   @action
   setBoardSize = (newSize: number): void => {
-    if (this.state !== GameState.NOT_STARTED) {
+    if (this._state !== GameState.NOT_STARTED) {
       throw new Error('Board size can not be changed once game has started');
     }
     this._board = new BoardModel(newSize);
@@ -57,7 +71,7 @@ export default class GameController {
 
   private _canPlaceStone = (cord: Coordinate): boolean =>
     !!(
-      this.state === GameState.IN_PROGRESS &&
+      this._state === GameState.IN_PROGRESS &&
       this.currentPlayer.equals(this.us) &&
       !this._getStone(cord)
     );

@@ -9,8 +9,10 @@ import { GameState } from 'services/GameController';
 const theme = createMuiTheme();
 
 test('it renders the appropriate heading', () => {
-  const gameController = MockGameController(5);
-  gameController.state = GameState.NOT_STARTED;
+  const gameController = MockGameController({
+    boardSize: 5,
+    state: GameState.NOT_STARTED
+  });
 
   const { getByText } = render(<ConfigForm />, {
     services: { gameController },
@@ -26,8 +28,10 @@ test('it renders the appropriate heading', () => {
 });
 
 test('it renders a select box with board sizes', () => {
-  const gameController = MockGameController(5);
-  gameController.state = GameState.NOT_STARTED;
+  const gameController = MockGameController({
+    boardSize: 5,
+    state: GameState.NOT_STARTED
+  });
 
   const { getByLabelText } = render(<ConfigForm />, {
     services: { gameController },
@@ -50,27 +54,11 @@ test('it renders a select box with board sizes', () => {
   }
 });
 
-test('it renders start game button', () => {
-  const gameController = MockGameController(5);
-  gameController.state = GameState.NOT_STARTED;
-
-  const { getByText } = render(<ConfigForm />, {
-    services: { gameController },
-    theme
-  });
-  // function text match needed since button text is nested within a span
-  const startGameButton = getByText((text, node: HTMLElement) => {
-    const hasMatchingText = /start game/i.test(node.textContent || '');
-    const isButton =
-      node.nodeName === 'BUTTON' || node.getAttribute('role') === 'button';
-    return hasMatchingText && isButton;
-  });
-  expect(startGameButton).toBeTruthy();
-});
-
 test('selecting an option changes board size', () => {
-  const gameController = MockGameController(5);
-  gameController.state = GameState.NOT_STARTED;
+  const gameController = MockGameController({
+    boardSize: 5,
+    state: GameState.NOT_STARTED
+  });
 
   const { getByLabelText } = render(<ConfigForm />, {
     services: { gameController },
@@ -84,4 +72,45 @@ test('selecting an option changes board size', () => {
   expect(mockSetBoardSize.mock.calls.length).toBe(1);
   expect(mockSetBoardSize.mock.calls[0].length).toBe(1);
   expect(mockSetBoardSize.mock.calls[0][0]).toBe(9);
+});
+
+const startGameMatcher = (text: string, node: HTMLElement): boolean => {
+  const hasMatchingText = /start game/i.test(node.textContent || '');
+  const isButton =
+    node.nodeName === 'BUTTON' || node.getAttribute('role') === 'button';
+  return hasMatchingText && isButton;
+};
+
+test('it renders start game button', () => {
+  const gameController = MockGameController({
+    boardSize: 5,
+    state: GameState.NOT_STARTED
+  });
+
+  const { getByText } = render(<ConfigForm />, {
+    services: { gameController },
+    theme
+  });
+  // function text match needed since button text is nested within a span
+  const startGameButton = getByText(startGameMatcher);
+  expect(startGameButton).toBeTruthy();
+});
+test('clicking start game starts game', () => {
+  const gameController = MockGameController({
+    boardSize: 5,
+    state: GameState.NOT_STARTED
+  });
+
+  const { getByText } = render(<ConfigForm />, {
+    services: { gameController },
+    theme
+  });
+  // function text match needed since button text is nested within a span
+  const startGameButton = getByText(startGameMatcher);
+
+  fireEvent.click(startGameButton);
+
+  const mockStartGame = gameController.startGame as jest.Mock;
+  expect(mockStartGame.mock.calls.length).toBe(1);
+  expect(mockStartGame.mock.calls[0].length).toBe(0);
 });

@@ -19,9 +19,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      width: '100%',
-      marginBottom: theme.spacing(6),
-      marginTop: theme.spacing(4)
+      width: '100%'
     },
     details: {
       fontSize: theme.typography.subtitle1.fontSize
@@ -79,9 +77,7 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
     <div className={classes.root}>
       <ExpansionPanel aria-controls="rules-content" id="rules-header">
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h4" component="h2">
-            Rules
-          </Typography>
+          <Typography variant="h2">Rules</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails classes={{ root: classes.details }}>
           <Grid container spacing={3}>
@@ -115,9 +111,7 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
         id="keyboard-nav-header"
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h4" component="h2">
-            Keyboard Shortcuts
-          </Typography>
+          <Typography variant="h2">Keyboard Shortcuts</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails classes={{ root: classes.details }}>
           <Grid container spacing={3}>

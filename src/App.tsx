@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Board from 'components/Board';
+import React, { useState, useEffect, useContext } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
+import { observer } from 'mobx-react';
+
+import { ServiceContext, Services } from 'services/ServiceContainer';
+import Board from 'components/Board';
 import InformationPanels from 'components/InformationPanels';
 import ConfigForm from 'components/ConfigForm';
+import { GameState } from 'services/GameController';
 
 const MAX_CONTENT_WIDTH_PX = 1100;
 const CONTENT_PADDING_PX = 16;
@@ -23,12 +27,20 @@ const useAppStyles = makeStyles(theme =>
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center'
+    },
+    infoPanels: {
+      marginBottom: theme.spacing(5),
+      marginTop: theme.spacing(4)
+    },
+    configForm: {
+      marginBottom: theme.spacing(8)
     }
   })
 );
 
 const App: React.ComponentType = () => {
-  const styleClasses = useAppStyles();
+  const { gameController } = useContext(ServiceContext) as Services;
+  const classes = useAppStyles();
   const [boardWidthPx, setBoardWidth] = useState(MAX_CONTENT_WIDTH_PX);
   const updateBoardWidth = (): void => {
     const viewPortWidthPx = document.documentElement.clientWidth;
@@ -45,15 +57,17 @@ const App: React.ComponentType = () => {
     return (): void => window.removeEventListener('resize', adjustBoardWidth);
   });
   return (
-    <div className={styleClasses.root}>
-      <div className={styleClasses.content}>
+    <div className={classes.root}>
+      <div className={classes.content}>
         <Typography variant="h1">Havannah</Typography>
-        <InformationPanels />
-        <ConfigForm />
+        <InformationPanels classes={{ root: classes.infoPanels }} />
+        {gameController.state === GameState.NOT_STARTED && (
+          <ConfigForm classes={{ root: classes.configForm }} />
+        )}
         <Board widthPx={boardWidthPx} />
       </div>
     </div>
   );
 };
 
-export default App;
+export default observer(App);
