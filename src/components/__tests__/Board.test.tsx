@@ -7,15 +7,16 @@ import Board from '../Board';
 import BoardModel from 'models/Board';
 import Player from 'models/Player';
 import GameController, { GameState } from 'services/GameController';
+import Stone from 'models/Stone';
 const theme = createMuiTheme();
 
 const MockGameController = (boardSize: number): GameController =>
   (({
     board: new BoardModel(boardSize),
     state: GameState.IN_PROGRESS,
-    us: new Player('one'),
-    them: new Player('two'),
-    currentPlayer: new Player('one'),
+    us: new Player('human'),
+    them: new Player('bot'),
+    currentPlayer: new Player('human'),
     setBoardSize: jest.fn(),
     placeStone: jest.fn(),
     canPlaceStone: jest.fn(),
@@ -446,4 +447,71 @@ test('hitting other keys does not place stone', () => {
     fireClickEvent: el => fireEvent.keyDown(el, { key: 'x' }),
     shouldSucceed: false
   });
+});
+
+test('stones shown appropriately', () => {
+  const gameController = MockGameController(5);
+  const cordWithOurStone = new Coordinate({ file: 'c', rank: 4 });
+  const cordWithTheirStone = new Coordinate({ file: 'a', rank: 2 });
+  const cordWithNoStone = new Coordinate({ file: 'e', rank: 4 });
+  (gameController.getStone as jest.Mock).mockImplementation((cord: Coordinate):
+    | Stone
+    | undefined => {
+    if (cord.equals(cordWithOurStone)) {
+      return new Stone({
+        location: cordWithOurStone,
+        owner: new Player('human')
+      });
+    }
+    if (cord.equals(cordWithTheirStone)) {
+      return new Stone({
+        location: cordWithOurStone,
+        owner: new Player('bot')
+      });
+    }
+    return undefined;
+  });
+
+  const { getByLabelText } = render(<Board widthPx={1000} />, {
+    services: { gameController },
+    theme
+  });
+
+  const cellWithOurStone = getCell({
+    cord: cordWithOurStone,
+    getByLabelText
+  });
+  const cellWithTheirStone = getCell({
+    cord: cordWithTheirStone,
+    getByLabelText
+  });
+  const cellWithNoStone = getCell({
+    cord: cordWithNoStone,
+    getByLabelText
+  });
+
+  const labelPrefix = (cord: Coordinate): string =>
+    `Cell ${cord.file}${cord.rank}`;
+
+  expect(cellWithOurStone.getAttribute('aria-label')).toBe(
+    `${labelPrefix(cordWithOurStone)} (contains your stone)`
+  );
+  expect(cellWithTheirStone.getAttribute('aria-label')).toBe(
+    `${labelPrefix(cordWithTheirStone)} (contains opponent's stone)`
+  );
+  expect(cellWithNoStone.getAttribute('aria-label')).toBe(
+    `${labelPrefix(cordWithNoStone)}`
+  );
+
+  const { queryByLabelText: queryOurStone } = within(cellWithOurStone);
+  const { queryByLabelText: queryTheirStone } = within(cellWithTheirStone);
+  const { queryByLabelText: queryNoStone } = within(cellWithNoStone);
+  const ourStone = queryOurStone('stone');
+  expect(ourStone).toBeDefined();
+
+  const theirStone = queryTheirStone('stone');
+  expect(theirStone).toBeDefined();
+
+  const noStone = queryNoStone('stone');
+  expect(noStone).toBeDefined();
 });

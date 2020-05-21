@@ -24,8 +24,8 @@ export default class GameController {
   @observable
   state: GameState;
 
-  readonly us: Player = new Player('one');
-  readonly them: Player = new Player('two');
+  readonly us: Player = new Player('human');
+  readonly them: Player = new Player('bot');
 
   @observable
   currentPlayer: Player = this.us;

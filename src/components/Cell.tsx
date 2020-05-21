@@ -161,6 +161,13 @@ const Cell: React.ComponentType<CellProps> = ({
   const disabled = !gameController.canPlaceStone(location);
   const cellHeight = getCellHeight(cellSideLength);
 
+  let label = `Cell ${location.file}${location.rank}`;
+  if (stoneForTile) {
+    label += ` (contains ${
+      stoneForTile.owner.id === 'human' ? 'your' : "opponent's"
+    } stone)`;
+  }
+
   const handleClick = (): void => {
     if (!disabled) {
       gameController.placeStone(location);
@@ -207,7 +214,7 @@ const Cell: React.ComponentType<CellProps> = ({
     <g
       className={classes.root}
       role="button"
-      aria-label={`Cell ${location.file}${location.rank}`}
+      aria-label={label}
       data-cord-hash={location.hash()}
       aria-pressed="false"
       tabIndex={tabIndex}

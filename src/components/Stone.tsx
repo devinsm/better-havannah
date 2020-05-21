@@ -18,7 +18,7 @@ const Stone: React.ComponentType<StoneProps> = ({
   borderWidth
 }: StoneProps) => {
   return (
-    <g>
+    <g aria-label="stone">
       <defs>
         <radialGradient id="1r_0.75_0.75__A0A0A0-_000" fx="0.75" fy="0.75">
           <stop offset="0%" stopColor="#a0a0a0"></stop>

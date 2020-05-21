@@ -1,7 +1,7 @@
 export default class Player {
-  readonly id: 'one' | 'two';
+  readonly id: 'human' | 'bot';
 
-  constructor(id: 'one' | 'two') {
+  constructor(id: 'human' | 'bot') {
     this.id = id;
   }
 
