@@ -1,13 +1,15 @@
 import React, { useContext, KeyboardEvent } from 'react';
-import Coordinate, { File } from 'models/Coordinate';
 import { observer } from 'mobx-react';
-import { ServiceContext, Services } from 'services/ServiceContainer';
 import {
   withStyles,
   WithStyles,
   Theme,
   createStyles
 } from '@material-ui/core/styles';
+import clsx from 'clsx';
+
+import Coordinate, { File } from 'models/Coordinate';
+import { ServiceContext, Services } from 'services/ServiceContainer';
 import BoardModel from 'models/Board';
 import Stone from './Stone';
 
@@ -20,7 +22,11 @@ const styles = (theme: Theme) =>
       '&:focus': {
         fill: theme.palette.grey['300'],
         outline: 0
-      }
+      },
+      cursor: 'pointer'
+    },
+    disabled: {
+      cursor: 'default'
     }
   });
 
@@ -212,7 +218,9 @@ const Cell: React.ComponentType<CellProps> = ({
   };
   return (
     <g
-      className={classes.root}
+      className={clsx(classes.root, {
+        [classes.disabled]: disabled
+      })}
       role="button"
       aria-label={label}
       data-cord-hash={location.hash()}
