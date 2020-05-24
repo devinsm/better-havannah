@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+requests = "*"
+
+[packages]
+ujson = "*"
+email-validator = "*"
+aiofiles = "*"
+uvicorn = "*"
+orjson = "*"
+gunicorn = "*"
+fastapi = "*"
+
+[requires]
+python_version = "3.7"
