@@ -97,7 +97,7 @@ export default class GameController {
     // TODO: hit backend
     this._stones.set(
       cord.hash(),
-      new Stone({ location: cord, owner: this.playerOne })
+      new Stone({ location: cord, owner: this.currentPlayer })
     );
     this._currentPlayer = this._currentPlayer.equals(this.playerOne)
       ? this.playerTwo

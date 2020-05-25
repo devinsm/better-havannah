@@ -1,13 +1,12 @@
 import React from 'react';
 import { within, fireEvent, Matcher } from '@testing-library/dom';
 import Coordinate from 'models/Coordinate';
-import { createMuiTheme } from '@material-ui/core/styles';
 import { render, MockGameController } from 'test-utils';
+
 import Board from '../Board';
 import Player from 'models/Player';
 import GameController from 'services/GameController';
 import Stone from 'models/Stone';
-const theme = createMuiTheme();
 
 function getCell({
   cord,
@@ -34,8 +33,7 @@ function testInitialState({
   topLeftCorner: Coordinate;
 }): void {
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController: MockGameController({ boardSize }) },
-    theme
+    services: { gameController: MockGameController({ boardSize }) }
   });
 
   const board = getByLabelText('Game Board');
@@ -114,8 +112,7 @@ test('can navigate via "a", "s", "d", "e", "w", "q" keys', () => {
   // w => up
   // q => up & left
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController: MockGameController({ boardSize: 6 }) },
-    theme
+    services: { gameController: MockGameController({ boardSize: 6 }) }
   });
 
   const navPath: { expectedCurrentFocus: Coordinate; keyToPress: string }[] = [
@@ -349,8 +346,7 @@ function testPlaceStone({
   shouldSucceed: boolean;
 }): void {
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
 
   const cellToClick = getCell({
@@ -459,8 +455,7 @@ test('stones shown appropriately', () => {
   });
 
   const { getByLabelText } = render(<Board widthPx={1000} />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
 
   const cellWithOurStone = getCell({

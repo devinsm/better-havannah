@@ -1,16 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import 'mobx-react/batchingForReactDom';
+
 import App from './App';
 import { ServiceContext } from 'services/ServiceContainer';
 import GameController from 'services/GameController';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {
-  ThemeProvider,
-  createMuiTheme,
-  responsiveFontSizes
-} from '@material-ui/core/styles';
 import * as serviceWorker from './serviceWorker';
-import 'mobx-react/batchingForReactDom';
+import createTheme from 'styles/createTheme';
+
 require('typeface-berkshire-swash');
 
 const WrappedApp: React.ComponentType = () => {
@@ -19,7 +18,7 @@ const WrappedApp: React.ComponentType = () => {
   const theme = React.useMemo(
     () =>
       responsiveFontSizes(
-        createMuiTheme({
+        createTheme({
           palette: {
             type: prefersDarkMode ? 'dark' : 'light'
           },

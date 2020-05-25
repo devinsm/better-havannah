@@ -1,12 +1,9 @@
 import React from 'react';
-import { createMuiTheme } from '@material-ui/core/styles';
 import { render, MockGameController } from 'test-utils';
 import { within, fireEvent } from '@testing-library/react';
 
 import ConfigForm from '../ConfigForm';
 import { GameState } from 'services/GameController';
-
-const theme = createMuiTheme();
 
 test('it renders the appropriate heading', () => {
   const gameController = MockGameController({
@@ -15,8 +12,7 @@ test('it renders the appropriate heading', () => {
   });
 
   const { getByText } = render(<ConfigForm />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
   const heading = getByText('To begin select a board size!');
   // Important to not miss heading levels
@@ -34,8 +30,7 @@ test('it renders a select box with board sizes', () => {
   });
 
   const { getByLabelText } = render(<ConfigForm />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
   const boardSizeSelect = getByLabelText(/^board size$/i);
   expect(
@@ -61,8 +56,7 @@ test('selecting an option changes board size', () => {
   });
 
   const { getByLabelText } = render(<ConfigForm />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
   const boardSizeSelect = getByLabelText(/^board size$/i);
 
@@ -88,8 +82,7 @@ test('it renders start game button', () => {
   });
 
   const { getByText } = render(<ConfigForm />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
   // function text match needed since button text is nested within a span
   const startGameButton = getByText(startGameMatcher);
@@ -102,8 +95,7 @@ test('clicking start game starts game', () => {
   });
 
   const { getByText } = render(<ConfigForm />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
   // function text match needed since button text is nested within a span
   const startGameButton = getByText(startGameMatcher);

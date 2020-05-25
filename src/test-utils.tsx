@@ -6,6 +6,7 @@ import { ThemeProvider, Theme } from '@material-ui/core/styles';
 import Board from 'models/Board';
 import Player from 'models/Player';
 import GameController, { GameState } from 'services/GameController';
+import createTheme from 'styles/createTheme';
 
 const getAppWrapper = ({
   services,
@@ -19,15 +20,13 @@ const getAppWrapper = ({
   }: {
     children?: React.ReactNode;
   }): React.ReactElement => {
-    const wrappedInServices = (
-      <ServiceContext.Provider value={services}>
-        {children}
-      </ServiceContext.Provider>
+    return (
+      <ThemeProvider theme={theme || createTheme()}>
+        <ServiceContext.Provider value={services}>
+          {children}
+        </ServiceContext.Provider>
+      </ThemeProvider>
     );
-    if (theme) {
-      return <ThemeProvider theme={theme}>{wrappedInServices}</ThemeProvider>;
-    }
-    return wrappedInServices;
   };
   return AppWrapper;
 };
@@ -36,11 +35,14 @@ const customRender = (
   ui: React.ReactElement,
   options: Omit<RenderOptions, 'queries' | 'wrapper'> & {
     services: Services;
-    theme: Theme;
+    theme?: Theme;
   }
 ): RenderResult =>
   render(ui, {
-    wrapper: getAppWrapper({ services: options.services }),
+    wrapper: getAppWrapper({
+      services: options.services,
+      theme: options.theme
+    }),
     ...options
   });
 

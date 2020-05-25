@@ -1,5 +1,4 @@
 import React from 'react';
-import { createMuiTheme } from '@material-ui/core/styles';
 import { render, MockGameController } from 'test-utils';
 import { Matcher } from '@testing-library/dom';
 
@@ -7,8 +6,6 @@ import { GameState } from 'services/GameController';
 import Player from 'models/Player';
 import MessageBoard from 'components/MessageBoard';
 import difference from 'lodash/difference';
-
-const theme = createMuiTheme();
 
 const playerOnesTurnRegex = /player one's turn/i;
 const playerTwosTurnRegex = /player two's turn/i;
@@ -54,8 +51,7 @@ test("lets users know when it is player one's turn", () => {
   });
 
   const { queryByText } = render(<MessageBoard />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
 
   assertCorrectMessage({ msgRegex: playerOnesTurnRegex, queryByText });
@@ -70,8 +66,7 @@ test("lets users know when it is player two's turn", () => {
   });
 
   const { queryByText } = render(<MessageBoard />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
 
   assertCorrectMessage({ msgRegex: playerTwosTurnRegex, queryByText });
@@ -86,8 +81,7 @@ test('shows message when player one wins', () => {
   });
 
   const { queryByText } = render(<MessageBoard />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
 
   assertCorrectMessage({ msgRegex: playerOneWinsRegex, queryByText });
@@ -102,8 +96,7 @@ test('shows message when player two wins', () => {
   });
 
   const { queryByText } = render(<MessageBoard />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
 
   assertCorrectMessage({ msgRegex: playerTwoWinsRegex, queryByText });
@@ -118,8 +111,7 @@ test('shows message when draw', () => {
   });
 
   const { queryByText } = render(<MessageBoard />, {
-    services: { gameController },
-    theme
+    services: { gameController }
   });
 
   assertCorrectMessage({ msgRegex: drawMsgRegex, queryByText });
