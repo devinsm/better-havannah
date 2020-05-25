@@ -11,17 +11,7 @@ import {
 } from '@material-ui/core/styles';
 import * as serviceWorker from './serviceWorker';
 import 'mobx-react/batchingForReactDom';
-import axios from 'axios';
 require('typeface-berkshire-swash');
-
-// Temporary code to prove API is working
-axios('/api/get-time')
-  .then(response => {
-    console.log(response);
-  })
-  .catch(error => {
-    console.log(error);
-  });
 
 const WrappedApp: React.ComponentType = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
