@@ -65,9 +65,9 @@ export const MockGameController = ({
   (({
     board: new Board(boardSize),
     state: state || GameState.IN_PROGRESS,
-    us: new Player('human'),
-    them: new Player('bot'),
-    currentPlayer: currentPlayer || new Player('human'),
+    playerOne: new Player('one'),
+    playerTwo: new Player('two'),
+    currentPlayer: currentPlayer || new Player('one'),
     winner: winner || null,
     setBoardSize: jest.fn(),
     placeStone: jest.fn(),

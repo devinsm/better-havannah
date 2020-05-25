@@ -10,9 +10,10 @@ import difference from 'lodash/difference';
 
 const theme = createMuiTheme();
 
-const thinkingMsgRegex = /bot is thinking/i;
-const winMsgRegex = /you win/i;
-const loseMsgRegex = /you lose/i;
+const playerOnesTurnRegex = /player one's turn/i;
+const playerTwosTurnRegex = /player two's turn/i;
+const playerOneWinsRegex = /player one wins/i;
+const playerTwoWinsRegex = /player two wins/i;
 const drawMsgRegex = /you tied/i;
 
 function assertCorrectMessage({
@@ -23,7 +24,13 @@ function assertCorrectMessage({
   queryByText: (text: Matcher) => HTMLElement | null;
 }): void {
   const allOtherRegex = difference(
-    [thinkingMsgRegex, winMsgRegex, loseMsgRegex, drawMsgRegex],
+    [
+      playerOnesTurnRegex,
+      playerTwosTurnRegex,
+      playerOneWinsRegex,
+      playerTwoWinsRegex,
+      drawMsgRegex
+    ],
     msgRegex ? [msgRegex] : []
   );
 
@@ -39,11 +46,11 @@ function assertCorrectMessage({
 }
 
 // eslint-disable-next-line jest/expect-expect
-test('lets user know when bot is thinking', () => {
+test("lets users know when it is player one's turn", () => {
   const gameController = MockGameController({
     boardSize: 5,
     state: GameState.IN_PROGRESS,
-    currentPlayer: new Player('bot')
+    currentPlayer: new Player('one')
   });
 
   const { queryByText } = render(<MessageBoard />, {
@@ -51,15 +58,15 @@ test('lets user know when bot is thinking', () => {
     theme
   });
 
-  assertCorrectMessage({ msgRegex: thinkingMsgRegex, queryByText });
+  assertCorrectMessage({ msgRegex: playerOnesTurnRegex, queryByText });
 });
 
 // eslint-disable-next-line jest/expect-expect
-test('does not show thinking message when not thinking', () => {
+test("lets users know when it is player two's turn", () => {
   const gameController = MockGameController({
     boardSize: 5,
     state: GameState.IN_PROGRESS,
-    currentPlayer: new Player('human')
+    currentPlayer: new Player('two')
   });
 
   const { queryByText } = render(<MessageBoard />, {
@@ -67,15 +74,15 @@ test('does not show thinking message when not thinking', () => {
     theme
   });
 
-  assertCorrectMessage({ queryByText });
+  assertCorrectMessage({ msgRegex: playerTwosTurnRegex, queryByText });
 });
 
 // eslint-disable-next-line jest/expect-expect
-test('shows message when user wins', () => {
+test('shows message when player one wins', () => {
   const gameController = MockGameController({
     boardSize: 5,
     state: GameState.COMPLETED,
-    winner: new Player('human')
+    winner: new Player('one')
   });
 
   const { queryByText } = render(<MessageBoard />, {
@@ -83,15 +90,15 @@ test('shows message when user wins', () => {
     theme
   });
 
-  assertCorrectMessage({ msgRegex: winMsgRegex, queryByText });
+  assertCorrectMessage({ msgRegex: playerOneWinsRegex, queryByText });
 });
 
 // eslint-disable-next-line jest/expect-expect
-test('shows message when user loses', () => {
+test('shows message when player two wins', () => {
   const gameController = MockGameController({
     boardSize: 5,
     state: GameState.COMPLETED,
-    winner: new Player('bot')
+    winner: new Player('two')
   });
 
   const { queryByText } = render(<MessageBoard />, {
@@ -99,7 +106,7 @@ test('shows message when user loses', () => {
     theme
   });
 
-  assertCorrectMessage({ msgRegex: loseMsgRegex, queryByText });
+  assertCorrectMessage({ msgRegex: playerTwoWinsRegex, queryByText });
 });
 
 // eslint-disable-next-line jest/expect-expect

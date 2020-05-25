@@ -170,7 +170,7 @@ const Cell: React.ComponentType<CellProps> = ({
   let label = `Cell ${location.file}${location.rank}`;
   if (stoneForTile) {
     label += ` (contains ${
-      stoneForTile.owner.id === 'human' ? 'your' : "opponent's"
+      stoneForTile.owner.id === 'one' ? 'your' : "opponent's"
     } stone)`;
   }
 

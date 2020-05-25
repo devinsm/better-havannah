@@ -446,13 +446,13 @@ test('stones shown appropriately', () => {
     if (cord.equals(cordWithOurStone)) {
       return new Stone({
         location: cordWithOurStone,
-        owner: new Player('human')
+        owner: new Player('one')
       });
     }
     if (cord.equals(cordWithTheirStone)) {
       return new Stone({
         location: cordWithOurStone,
-        owner: new Player('bot')
+        owner: new Player('two')
       });
     }
     return undefined;

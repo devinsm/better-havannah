@@ -1,9 +1,12 @@
+import startCase from 'lodash/startCase';
 export default class Player {
-  readonly id: 'human' | 'bot';
+  readonly id: 'one' | 'two';
 
-  constructor(id: 'human' | 'bot') {
+  constructor(id: 'one' | 'two') {
     this.id = id;
   }
+
+  displayName = (): string => `Player ${startCase(this.id)}`;
 
   equals(other: Player): boolean {
     return this.id === other.id;

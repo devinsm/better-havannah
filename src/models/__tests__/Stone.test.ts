@@ -3,7 +3,7 @@ import Stone from 'models/Stone';
 import Coordinate from 'models/Coordinate';
 
 test('stones with same player and same cords are equal', () => {
-  const playerOne = new Player('human');
+  const playerOne = new Player('one');
   const stoneA = new Stone({
     location: new Coordinate({ file: 'c', rank: 5 }),
     owner: playerOne
@@ -20,18 +20,18 @@ test('stones with different players are not equal', () => {
   const location = new Coordinate({ file: 'c', rank: 5 });
   const stoneA = new Stone({
     location,
-    owner: new Player('bot')
+    owner: new Player('two')
   });
   const stoneB = new Stone({
     location,
-    owner: new Player('human')
+    owner: new Player('one')
   });
   expect(stoneA.equals(stoneB)).toBe(false);
   expect(stoneB.equals(stoneA)).toBe(false);
 });
 
 test('stones with different locations are not equal', () => {
-  const owner = new Player('human');
+  const owner = new Player('one');
   const stoneA = new Stone({
     location: new Coordinate({ file: 'c', rank: 5 }),
     owner
@@ -45,7 +45,7 @@ test('stones with different locations are not equal', () => {
 });
 
 test('stones with same player and same cords have same hash', () => {
-  const playerOne = new Player('bot');
+  const playerOne = new Player('two');
   const stoneA = new Stone({
     location: new Coordinate({ file: 'c', rank: 5 }),
     owner: playerOne
@@ -64,17 +64,17 @@ test('stones with different players have different hashes', () => {
   const location = new Coordinate({ file: 'c', rank: 5 });
   const stoneA = new Stone({
     location,
-    owner: new Player('human')
+    owner: new Player('one')
   });
   const stoneB = new Stone({
     location,
-    owner: new Player('bot')
+    owner: new Player('two')
   });
   expect(stoneA.hash()).not.toBe(stoneB.hash());
 });
 
 test('stones with different locations have different hashes', () => {
-  const owner = new Player('human');
+  const owner = new Player('one');
   const stoneA = new Stone({
     location: new Coordinate({ file: 'c', rank: 5 }),
     owner

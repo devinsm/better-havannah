@@ -38,11 +38,11 @@ export default class GameController {
     this._state = GameState.IN_PROGRESS;
   };
 
-  readonly us: Player = new Player('human');
-  readonly them: Player = new Player('bot');
+  readonly playerOne: Player = new Player('one');
+  readonly playerTwo: Player = new Player('two');
 
   @observable
-  private _currentPlayer: Player = this.us;
+  private _currentPlayer: Player = this.playerOne;
 
   @computed({ keepAlive: true })
   get currentPlayer(): Player {
@@ -82,11 +82,7 @@ export default class GameController {
   });
 
   private _canPlaceStone = (cord: Coordinate): boolean =>
-    !!(
-      this._state === GameState.IN_PROGRESS &&
-      this._currentPlayer.equals(this.us) &&
-      !this._getStone(cord)
-    );
+    !!(this._state === GameState.IN_PROGRESS && !this._getStone(cord));
 
   /** should only be called within a Mobx reactive context */
   canPlaceStone = createTransformer((cord: Coordinate): boolean => {
@@ -101,8 +97,10 @@ export default class GameController {
     // TODO: hit backend
     this._stones.set(
       cord.hash(),
-      new Stone({ location: cord, owner: this.us })
+      new Stone({ location: cord, owner: this.playerOne })
     );
-    this._currentPlayer = this.them;
+    this._currentPlayer = this._currentPlayer.equals(this.playerOne)
+      ? this.playerTwo
+      : this.playerOne;
   };
 }
