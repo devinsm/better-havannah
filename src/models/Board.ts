@@ -11,6 +11,47 @@ export default class BoardModel {
     this.size = size;
   }
 
+  private isValidForBoard = (cord: Coordinate): boolean => {
+    return (
+      this.getFiles().includes(cord.file) &&
+      cord.rank >= this.getFirstRankInFile(cord.file) &&
+      cord.rank <= this.getLastRankInFile(cord.file)
+    );
+  };
+
+  getNeighbors = (cord: Coordinate): Coordinate[] => {
+    const neighbors: Coordinate[] = [];
+    const fileIndex = this.getFileIndex(cord.file);
+    const allFiles = this.getFiles();
+    const diffs = [
+      { file: 1, rank: 1 },
+      { file: 0, rank: 1 },
+      { file: -1, rank: 0 },
+      { file: -1, rank: -1 },
+      { file: 0, rank: -1 },
+      { file: 1, rank: 0 }
+    ];
+    for (const diff of diffs) {
+      const newNeighbor = new Coordinate({
+        file: allFiles[fileIndex + diff.file],
+        rank: cord.rank + diff.rank
+      });
+      if (this.isValidForBoard(newNeighbor)) {
+        neighbors.push(newNeighbor);
+      }
+    }
+    return neighbors;
+  };
+
+  isCorner = (cord: Coordinate): boolean => {
+    return this.getNeighbors(cord).length === 3;
+  };
+
+  /** Does not include corners */
+  isSide = (cord: Coordinate): boolean => {
+    return this.getNeighbors(cord).length === 4;
+  };
+
   /**
    * @return An array of all files for the given board size
    */
