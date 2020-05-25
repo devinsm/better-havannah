@@ -28,10 +28,10 @@ export interface BoardProps extends WithStyles<typeof styles> {
 
 const getTopLeftCornerCord = (boardModel: BoardModel): Coordinate => {
   const files = boardModel.getFiles();
-  const lastFile = files[files.length - 1];
+  const lastFileIndex = files.length - 1;
   return new Coordinate({
-    file: lastFile,
-    rank: boardModel.getFirstRankInFile(lastFile)
+    file: files[lastFileIndex],
+    rank: boardModel.getFirstRankInFile(lastFileIndex)
   });
 };
 
@@ -145,20 +145,15 @@ function handleCellKeyDown({
   }
 
   const allFiles = boardModel.getFiles();
-  const fileIndex = boardModel.getFileIndex(focusedCell.file);
 
-  const newFileIndex = fileIndex + delta.file;
+  const newFileIndex = focusedCell.fileIndex + delta.file;
   const newRank = focusedCell.rank + delta.rank;
-  if (
-    newFileIndex >= 0 &&
-    newFileIndex < allFiles.length &&
-    newRank >= boardModel.getFirstRankInFile(allFiles[newFileIndex]) &&
-    newRank <= boardModel.getLastRankInFile(allFiles[newFileIndex])
-  ) {
-    const cordToBeFocused = new Coordinate({
-      file: allFiles[newFileIndex],
-      rank: newRank
-    });
+
+  const cordToBeFocused = new Coordinate({
+    file: allFiles[newFileIndex],
+    rank: newRank
+  });
+  if (boardModel.isValidForBoard(cordToBeFocused)) {
     const toBeFocused = boardRootElement.querySelector(
       `[data-cord-hash='${cordToBeFocused.hash()}']`
     );

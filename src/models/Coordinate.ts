@@ -34,10 +34,14 @@ export default class Coordinate {
   // Coordinates are immutable
   readonly file: File;
   readonly rank: number;
+  // zero based index with 0 for 'a', 1 for 'b', etc.
+  // if constructed with a bad file, this will be -1
+  readonly fileIndex: number;
 
   constructor({ file, rank }: { file: File; rank: number }) {
     this.file = file;
     this.rank = rank;
+    this.fileIndex = 'abcdefghijklmnopqrstuvwxyz'.indexOf(file);
   }
 
   equals(other: Coordinate): boolean {

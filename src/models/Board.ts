@@ -11,17 +11,17 @@ export default class BoardModel {
     this.size = size;
   }
 
-  private isValidForBoard = (cord: Coordinate): boolean => {
+  isValidForBoard = (cord: Coordinate): boolean => {
     return (
-      this.getFiles().includes(cord.file) &&
-      cord.rank >= this.getFirstRankInFile(cord.file) &&
-      cord.rank <= this.getLastRankInFile(cord.file)
+      cord.fileIndex >= 0 &&
+      cord.fileIndex < this.getFiles().length &&
+      cord.rank >= this.getFirstRankInFile(cord.fileIndex) &&
+      cord.rank <= this.getLastRankInFile(cord.fileIndex)
     );
   };
 
   getNeighbors = (cord: Coordinate): Coordinate[] => {
     const neighbors: Coordinate[] = [];
-    const fileIndex = this.getFileIndex(cord.file);
     const allFiles = this.getFiles();
     const diffs = [
       { file: 1, rank: 1 },
@@ -33,7 +33,7 @@ export default class BoardModel {
     ];
     for (const diff of diffs) {
       const newNeighbor = new Coordinate({
-        file: allFiles[fileIndex + diff.file],
+        file: allFiles[cord.fileIndex + diff.file],
         rank: cord.rank + diff.rank
       });
       if (this.isValidForBoard(newNeighbor)) {
@@ -50,6 +50,16 @@ export default class BoardModel {
   /** Does not include corners */
   isSide = (cord: Coordinate): boolean => {
     return this.getNeighbors(cord).length === 4;
+  };
+
+  /**
+   * @returns The coordinate which is vertically higher than the other on
+   * the board
+   */
+  higher = (cordA: Coordinate, cordB: Coordinate): Coordinate => {
+    const fileDiff = cordA.fileIndex - cordB.fileIndex;
+    const rankDiff = cordA.rank - cordB.rank;
+    return fileDiff + rankDiff > 0 ? cordA : cordB;
   };
 
   /**
@@ -114,26 +124,9 @@ export default class BoardModel {
   };
 
   /**
-   * @param file A file on the board.
-   * @return A zero based index for the file (file 'a' gets index 0, file 'b'
-   * gets index 1, etc.)
-   */
-  getFileIndex(file: File): number {
-    const allFiles = this.getFiles();
-    const index = allFiles.findIndex(item => item === file);
-    if (index < 0) {
-      throw Error(`file ${file} not on board of size ${this.size}`);
-    }
-
-    return index;
-  }
-
-  /**
-   * @param file A file on the board.
    * @returns The first rank in the given file on a board of the given size.
    */
-  getFirstRankInFile(file: File): number {
-    const fileIndex = this.getFileIndex(file);
+  getFirstRankInFile(fileIndex: number): number {
     if (fileIndex <= this.size - 1) {
       return 1;
     } else {
@@ -142,11 +135,9 @@ export default class BoardModel {
   }
 
   /**
-   * @param file A file on the board.
    * @returns The last rank in the given file on a board of the given size.
    */
-  getLastRankInFile(file: File): number {
-    const fileIndex = this.getFileIndex(file);
+  getLastRankInFile(fileIndex: number): number {
     if (fileIndex >= this.size - 1) {
       return this.getMaxRank();
     } else {

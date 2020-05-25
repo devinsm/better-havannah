@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-import Coordinate, { File } from 'models/Coordinate';
+import Coordinate from 'models/Coordinate';
 import { ServiceContext, Services } from 'services/ServiceContainer';
 import BoardModel from 'models/Board';
 import Stone from './Stone';
@@ -67,17 +67,16 @@ function getCellHeight(cellSideLength: number): number {
  * cell in the given file.
  */
 function fileStartingCoords({
-  file,
+  fileIndex,
   cellSideLength,
   cellHeight,
   boardModel
 }: {
-  file: File;
+  fileIndex: number;
   cellSideLength: number;
   boardModel: BoardModel;
   cellHeight: number;
 }): SvgCoordinate {
-  const fileIndex = boardModel.getFileIndex(file);
   const halfLength = 0.5 * cellSideLength;
   const halfHeight = 0.5 * cellHeight;
 
@@ -121,13 +120,15 @@ function getSvgCoords({
   cellCoordinates: Coordinate;
 }): SvgCoordinate {
   const { x: startX, y: startY } = fileStartingCoords({
-    file: cellCoordinates.file,
+    fileIndex: cellCoordinates.fileIndex,
     cellSideLength,
     cellHeight,
     boardModel
   });
 
-  const firstRankInFile = boardModel.getFirstRankInFile(cellCoordinates.file);
+  const firstRankInFile = boardModel.getFirstRankInFile(
+    cellCoordinates.fileIndex
+  );
 
   const inset = cellCoordinates.rank - firstRankInFile;
   return {
