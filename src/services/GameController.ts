@@ -103,4 +103,14 @@ export default class GameController {
       ? this.playerTwo
       : this.playerOne;
   };
+
+  /**
+   * @returns The coordinate which is vertically higher than the other on
+   * the board
+   */
+  private higher = (cordA: Coordinate, cordB: Coordinate): Coordinate => {
+    const fileDiff = cordA.fileIndex - cordB.fileIndex;
+    const rankDiff = cordA.rank - cordB.rank;
+    return fileDiff + rankDiff > 0 ? cordA : cordB;
+  };
 }

@@ -53,16 +53,6 @@ export default class BoardModel {
   };
 
   /**
-   * @returns The coordinate which is vertically higher than the other on
-   * the board
-   */
-  higher = (cordA: Coordinate, cordB: Coordinate): Coordinate => {
-    const fileDiff = cordA.fileIndex - cordB.fileIndex;
-    const rankDiff = cordA.rank - cordB.rank;
-    return fileDiff + rankDiff > 0 ? cordA : cordB;
-  };
-
-  /**
    * @return An array of all files for the given board size
    */
   getFiles = (): File[] => {
@@ -122,6 +112,13 @@ export default class BoardModel {
 
     return coordinates;
   };
+
+  /**
+   * @returns The number of cells on the board. This is calculated using
+   * a closed form formula in O(1) time, making it more efficient
+   * than this.getCoordinates().length
+   */
+  getNumberOfCells = (): number => 3 * this.size * (this.size - 1) + 1;
 
   /**
    * @returns The first rank in the given file on a board of the given size.
