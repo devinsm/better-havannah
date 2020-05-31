@@ -1,7 +1,13 @@
 import Coordinate, { File } from 'models/Coordinate';
 
 export const MAX_BOARD_SIZE = 13;
-
+export type BoardSide =
+  | 'topLeft'
+  | 'topRight'
+  | 'middleRight'
+  | 'middleLeft'
+  | 'bottomRight'
+  | 'bottomLeft';
 export default class BoardModel {
   readonly size: number;
   constructor(size: number) {
@@ -54,6 +60,8 @@ export default class BoardModel {
   isSide = (cord: Coordinate): boolean => {
     return this.getNeighbors(cord).length === 4;
   };
+
+  getBoardSide = (cord: Coordinate): BoardSide | null => null;
 
   /**
    * @return An array of all files for the given board size

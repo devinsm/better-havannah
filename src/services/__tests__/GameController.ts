@@ -259,7 +259,7 @@ test('can win with a bridge', () => {
 
   const plays: TestPlay[] = [
     {
-      cord: new Coordinate({ file: 'c', rank: 5 }),
+      cord: new Coordinate({ file: 'i', rank: 5 }),
       expectedCurrentPlayer: controller.playerOne
     },
     {
@@ -316,7 +316,7 @@ test('you can win with a fork', () => {
   const plays: TestPlay[] = [
     {
       cord: new Coordinate({ file: 'd', rank: 7 }),
-      expectedCurrentPlayer: controller.playerTwo
+      expectedCurrentPlayer: controller.playerOne
     },
     {
       cord: new Coordinate({ file: 'e', rank: 2 }),
