@@ -159,15 +159,37 @@ test('can not place stone on taken tile', () => {
   expect(() => controller.placeStone(cord)).toThrow();
 });
 
+interface TestPlay {
+  cord: Coordinate;
+  expectedCurrentPlayer: Player;
+}
+
+function expectGame({
+  controller,
+  plays,
+  expectedWinner
+}: {
+  controller: GameController;
+  plays: TestPlay[];
+  expectedWinner: Player | null;
+}): void {
+  for (const { cord, expectedCurrentPlayer } of plays) {
+    expect(controller.state).toBe(GameState.IN_PROGRESS);
+    expect(controller.winner).toBe(null);
+    expect(controller.currentPlayer.equals(expectedCurrentPlayer)).toBe(true);
+    controller.placeStone(cord);
+  }
+  expect(controller.state).toBe(GameState.COMPLETED);
+  expect(controller.winner).toBe(expectedWinner);
+}
+
+// eslint-disable-next-line jest/expect-expect
 test('can win with ring', () => {
   const controller = new GameController();
   controller.setBoardSize(5);
   controller.startGame();
 
-  const plays: {
-    cord: Coordinate;
-    expectedCurrentPlayer: Player;
-  }[] = [
+  const plays: TestPlay[] = [
     {
       cord: new Coordinate({ file: 'i', rank: 7 }),
       expectedCurrentPlayer: controller.playerOne
@@ -226,12 +248,132 @@ test('can win with ring', () => {
     }
   ];
 
-  for (const { cord, expectedCurrentPlayer } of plays) {
-    expect(controller.state).toBe(GameState.IN_PROGRESS);
-    expect(controller.winner).toBe(null);
-    expect(controller.currentPlayer.equals(expectedCurrentPlayer)).toBe(true);
-    controller.placeStone(cord);
-  }
-  expect(controller.state).toBe(GameState.COMPLETED);
-  expect(controller.winner).toBe(controller.playerTwo);
+  expectGame({ controller, plays, expectedWinner: controller.playerTwo });
+});
+
+// eslint-disable-next-line jest/expect-expect
+test('can win with a bridge', () => {
+  const controller = new GameController();
+  controller.setBoardSize(5);
+  controller.startGame();
+
+  const plays: TestPlay[] = [
+    {
+      cord: new Coordinate({ file: 'c', rank: 5 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 9 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'h', rank: 4 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'g', rank: 3 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'g', rank: 4 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 9 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 3 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'g', rank: 9 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 2 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'h', rank: 9 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 1 }),
+      expectedCurrentPlayer: controller.playerOne
+    }
+  ];
+
+  expectGame({ controller, plays, expectedWinner: controller.playerOne });
+});
+
+// eslint-disable-next-line jest/expect-expect
+test('you can win with a fork', () => {
+  const controller = new GameController();
+  controller.setBoardSize(4);
+  controller.startGame();
+
+  const plays: TestPlay[] = [
+    {
+      cord: new Coordinate({ file: 'd', rank: 7 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 2 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 7 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 3 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 7 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 4 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 6 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'g', rank: 5 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'g', rank: 6 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'c', rank: 6 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'd', rank: 6 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'd', rank: 3 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'c', rank: 5 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'a', rank: 4 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'b', rank: 5 }),
+      expectedCurrentPlayer: controller.playerOne
+    }
+  ];
+  expectGame({ controller, plays, expectedWinner: controller.playerOne });
 });
