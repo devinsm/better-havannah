@@ -8,6 +8,9 @@ export default class BoardModel {
     if (size > MAX_BOARD_SIZE) {
       throw new Error(`Max board size is ${MAX_BOARD_SIZE}`);
     }
+    if (size < 2) {
+      throw new Error(`Min board size is 2`);
+    }
     this.size = size;
   }
 

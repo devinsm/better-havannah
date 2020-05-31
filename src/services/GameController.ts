@@ -94,7 +94,6 @@ export default class GameController {
     if (!this._canPlaceStone(cord)) {
       throw new Error(`Can not place stone at ${cord.file}${cord.rank}`);
     }
-    // TODO: hit backend
     this._stones.set(
       cord.hash(),
       new Stone({ location: cord, owner: this.currentPlayer })
