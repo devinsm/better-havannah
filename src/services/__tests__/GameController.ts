@@ -4,6 +4,7 @@ import differenceBy from 'lodash/differenceBy';
 import GameController, { GameState } from '../GameController';
 import Coordinate from 'models/Coordinate';
 import Stone from 'models/Stone';
+import Player from 'models/Player';
 
 test('you can start the game', () => {
   const controller = new GameController();
@@ -14,7 +15,7 @@ test('you can start the game', () => {
   expect(controller.state).toBe(GameState.IN_PROGRESS);
 });
 
-test('you can change board size before game starts', () => {
+test('you can change board size before the game starts', () => {
   const controller = new GameController();
   controller.setBoardSize(9);
   expect(controller.board.size).toBe(9);
@@ -72,7 +73,7 @@ test('initially all tiles do not have stones', () => {
 });
 
 // eslint-disable-next-line jest/expect-expect
-test('can place a stone as both players', () => {
+test('you can place a stone as both players', () => {
   const controller = new GameController();
   controller.setBoardSize(5);
   controller.startGame();
@@ -98,7 +99,7 @@ test('can place a stone as both players', () => {
   return expectStones({ controller, stones });
 });
 
-test('can not place stone when tile taken', () => {
+test('canPlaceStone checks if tile taken', () => {
   const controller = new GameController();
   controller.setBoardSize(5);
   controller.startGame();
@@ -146,4 +147,91 @@ test('can not place stone when tile taken', () => {
       }
     );
   });
+});
+
+test('can not place stone on taken tile', () => {
+  const controller = new GameController();
+  controller.setBoardSize(5);
+  controller.startGame();
+
+  const cord = new Coordinate({ file: 'a', rank: 1 });
+  controller.placeStone(cord);
+  expect(() => controller.placeStone(cord)).toThrow();
+});
+
+test('can win with ring', () => {
+  const controller = new GameController();
+  controller.setBoardSize(5);
+  controller.startGame();
+
+  const plays: {
+    cord: Coordinate;
+    expectedCurrentPlayer: Player;
+  }[] = [
+    {
+      cord: new Coordinate({ file: 'i', rank: 7 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'g', rank: 6 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'h', rank: 6 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 6 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 6 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 5 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'd', rank: 4 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'e', rank: 4 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'd', rank: 3 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 5 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'd', rank: 5 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 4 }),
+      expectedCurrentPlayer: controller.playerTwo
+    },
+    {
+      cord: new Coordinate({ file: 'f', rank: 7 }),
+      expectedCurrentPlayer: controller.playerOne
+    },
+    {
+      cord: new Coordinate({ file: 'g', rank: 5 }),
+      expectedCurrentPlayer: controller.playerTwo
+    }
+  ];
+
+  for (const { cord, expectedCurrentPlayer } of plays) {
+    expect(controller.state).toBe(GameState.IN_PROGRESS);
+    expect(controller.winner).toBe(null);
+    expect(controller.currentPlayer.equals(expectedCurrentPlayer)).toBe(true);
+    controller.placeStone(cord);
+  }
+  expect(controller.state).toBe(GameState.COMPLETED);
+  expect(controller.winner).toBe(controller.playerTwo);
 });
