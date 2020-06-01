@@ -1,6 +1,6 @@
 import orderBy from 'lodash/orderBy';
 
-import Board from '../Board';
+import Board, { BoardSide } from '../Board';
 import Coordinate from 'models/Coordinate';
 
 const sortCords = (cords: Coordinate[]): Coordinate[] =>
@@ -205,6 +205,56 @@ test('neighbors are correctly determined', () => {
           cord.equals(expectedNeighbors[index])
         )
       ).toBe(true);
+    }
+  }
+});
+
+test('board sides correctly computed', () => {
+  const testCases: {
+    board: Board;
+    sideCords: Record<BoardSide, Coordinate>;
+    nonSideCords: Coordinate[];
+  }[] = [
+    {
+      board: new Board(5),
+      sideCords: {
+        [BoardSide.TOP_LEFT]: new Coordinate({ file: 'i', rank: 7 }),
+        [BoardSide.TOP_RIGHT]: new Coordinate({ file: 'h', rank: 9 }),
+        [BoardSide.MIDDLE_LEFT]: new Coordinate({ file: 'g', rank: 3 }),
+        [BoardSide.MIDDLE_RIGHT]: new Coordinate({ file: 'b', rank: 6 }),
+        [BoardSide.BOTTOM_LEFT]: new Coordinate({ file: 'd', rank: 1 }),
+        [BoardSide.BOTTOM_RIGHT]: new Coordinate({ file: 'a', rank: 3 })
+      },
+      nonSideCords: [
+        new Coordinate({ file: 'i', rank: 5 }),
+        new Coordinate({ file: 'c', rank: 6 })
+      ]
+    },
+    {
+      board: new Board(6),
+      sideCords: {
+        [BoardSide.TOP_LEFT]: new Coordinate({ file: 'k', rank: 10 }),
+        [BoardSide.TOP_RIGHT]: new Coordinate({ file: 'g', rank: 11 }),
+        [BoardSide.MIDDLE_LEFT]: new Coordinate({ file: 'j', rank: 5 }),
+        [BoardSide.MIDDLE_RIGHT]: new Coordinate({ file: 'e', rank: 10 }),
+        [BoardSide.BOTTOM_LEFT]: new Coordinate({ file: 'c', rank: 1 }),
+        [BoardSide.BOTTOM_RIGHT]: new Coordinate({ file: 'a', rank: 2 })
+      },
+      nonSideCords: [
+        new Coordinate({ file: 'a', rank: 1 }),
+        new Coordinate({ file: 'a', rank: 6 }),
+        new Coordinate({ file: 'i', rank: 8 })
+      ]
+    }
+  ];
+
+  for (const testCase of testCases) {
+    for (const sideCase of Object.entries(testCase.sideCords)) {
+      const [side, cord] = sideCase;
+      expect(testCase.board.getBoardSide(cord)).toBe(+side);
+    }
+    for (const cord of testCase.nonSideCords) {
+      expect(testCase.board.getBoardSide(cord)).toBe(null);
     }
   }
 });

@@ -1,14 +1,16 @@
 import Coordinate, { File } from 'models/Coordinate';
 
 export const MAX_BOARD_SIZE = 13;
-export type BoardSide =
-  | 'topLeft'
-  | 'topRight'
-  | 'middleRight'
-  | 'middleLeft'
-  | 'bottomRight'
-  | 'bottomLeft';
-export default class BoardModel {
+export enum BoardSide {
+  TOP_LEFT,
+  TOP_RIGHT,
+  MIDDLE_LEFT,
+  MIDDLE_RIGHT,
+  BOTTOM_LEFT,
+  BOTTOM_RIGHT
+}
+
+export default class Board {
   readonly size: number;
   constructor(size: number) {
     if (size > MAX_BOARD_SIZE) {
@@ -61,7 +63,32 @@ export default class BoardModel {
     return this.getNeighbors(cord).length === 4;
   };
 
-  getBoardSide = (cord: Coordinate): BoardSide | null => null;
+  getBoardSide = (cord: Coordinate): BoardSide | null => {
+    if (!this.isSide(cord)) {
+      return null;
+    }
+    if (cord.file === 'a') {
+      return BoardSide.BOTTOM_RIGHT;
+    }
+    if (cord.rank === 1) {
+      return BoardSide.BOTTOM_LEFT;
+    }
+    if (cord.fileIndex === this.getFiles().length - 1) {
+      return BoardSide.TOP_LEFT;
+    }
+    if (cord.rank === this.getMaxRank()) {
+      return BoardSide.TOP_RIGHT;
+    }
+    // These next two cases only work because we've ruled out the other
+    // situations where the cord would be at the start or end of its file
+    if (cord.rank === this.getFirstRankInFile(cord.fileIndex)) {
+      return BoardSide.MIDDLE_LEFT;
+    }
+    if (cord.rank === this.getLastRankInFile(cord.fileIndex)) {
+      return BoardSide.MIDDLE_RIGHT;
+    }
+    return null;
+  };
 
   /**
    * @return An array of all files for the given board size
