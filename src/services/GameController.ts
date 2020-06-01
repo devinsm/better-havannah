@@ -48,7 +48,7 @@ class ConnectedComponent {
     }
 
     const boardSide = this.board.getBoardSide(stone.location);
-    if (boardSide) {
+    if (boardSide !== null) {
       this.sidesTouched.add(boardSide);
     }
 
@@ -200,6 +200,7 @@ export default class GameController {
 
   private getConnectedComponents = (player: Player): ConnectedComponent[] => {
     const unvisitedStones: Map<string, Stone> = new Map(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       [...this._stones.entries()].filter(([hash, stone]) =>
         stone.owner.equals(player)
       )
@@ -224,7 +225,7 @@ export default class GameController {
   };
 
   private componentIsWinner = (component: ConnectedComponent): boolean => {
-    if (component.numberCornerStones >= 2 || component.sidesTouched.size > 3) {
+    if (component.numberCornerStones >= 2 || component.sidesTouched.size >= 3) {
       return true;
     }
     //TODO check for ring

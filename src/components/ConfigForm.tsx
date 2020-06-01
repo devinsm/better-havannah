@@ -37,7 +37,7 @@ const ConfigForm: React.ComponentType<ConfigFormProps> = ({
 }: ConfigFormProps) => {
   const { gameController } = useContext(ServiceContext) as Services;
   const sizeOptions = [];
-  for (let i = 5; i < 11; i++) {
+  for (let i = 4; i < 11; i++) {
     sizeOptions.push(i);
   }
 
