@@ -11,10 +11,11 @@ export enum GameState {
   COMPLETED
 }
 
-class ConnectedComponent {
+class StoneGroup {
   board: BoardModel;
+  /**use stone.location.hash() as key*/
+  @observable
   stones: Map<string, Stone> = new Map();
-  highestStone: Stone | null = null;
   numberCornerStones = 0;
   sidesTouched: Set<BoardSide> = new Set();
 
@@ -22,27 +23,15 @@ class ConnectedComponent {
     this.board = new BoardModel(boardSize);
   }
 
-  /**
-   * @returns The coordinate which is vertically higher than the other on
-   * the board
-   */
-  private higherStone = (stoneA: Stone, stoneB: Stone): Stone => {
-    const cordA = stoneA.location;
-    const cordB = stoneB.location;
-    const fileDiff = cordA.fileIndex - cordB.fileIndex;
-    const rankDiff = cordA.rank - cordB.rank;
-    return fileDiff + rankDiff > 0 ? stoneA : stoneB;
-  };
-
-  // Client code responsible for checking if this stone is part of this
-  // connected component
-  addStone = (stone: Stone): void => {
-    if (this.highestStone === null) {
-      this.highestStone = stone;
-    } else {
-      this.highestStone = this.higherStone(stone, this.highestStone);
+  get player(): Player | null {
+    if (this.stones.size === 0) {
+      return null;
     }
+    return this.stones.values().next().value.owner;
+  }
 
+  // Client code responsible for checking if this stone is part of this group
+  addStone = (stone: Stone): void => {
     if (this.board.isCorner(stone.location)) {
       this.numberCornerStones++;
     }
@@ -75,7 +64,7 @@ export default class GameController {
   private _winner: Player | null = null;
 
   @observable
-  private readonly _stones: Map<string, Stone> = new Map();
+  private _stone_groups: Set<StoneGroup> = new Set();
 
   constructor() {
     this._board = new BoardModel(6);
@@ -118,8 +107,15 @@ export default class GameController {
     this._board = new BoardModel(newSize);
   };
 
-  private _getStone = (cord: Coordinate): Stone | undefined =>
-    this._stones.get(cord.hash());
+  private _getStone = (cord: Coordinate): Stone | undefined => {
+    for (const group of this._stone_groups.values()) {
+      const stone = group.stones.get(cord.hash());
+      if (stone) {
+        return stone;
+      }
+    }
+    return undefined;
+  };
 
   /** should only be called within a Mobx reactive context */
   getStone = createTransformer((cord: Coordinate): Stone | undefined => {
@@ -139,114 +135,64 @@ export default class GameController {
     if (!this._canPlaceStone(cord)) {
       throw new Error(`Can not place stone at ${cord.file}${cord.rank}`);
     }
-    this._stones.set(
-      cord.hash(),
-      new Stone({ location: cord, owner: this.currentPlayer })
-    );
+    const newStone = new Stone({ location: cord, owner: this._currentPlayer });
+
+    const adjacentGroups: StoneGroup[] = [];
+    const neighbors = this._board.getNeighbors(cord);
+    for (const group of this._stone_groups.values()) {
+      if (!group.player || group.player.equals(newStone.owner)) {
+        for (const neighbor of neighbors) {
+          if (group.stones.has(neighbor.hash())) {
+            adjacentGroups.push(group);
+            this._stone_groups.delete(group);
+            break;
+          }
+        }
+      }
+    }
+
+    let newGroup: StoneGroup = new StoneGroup(this._board.size);
+    if (adjacentGroups.length === 1) {
+      newGroup = adjacentGroups[0];
+    } else {
+      for (const group of adjacentGroups) {
+        for (const stone of group.stones.values()) {
+          newGroup.addStone(stone);
+        }
+      }
+    }
+    newGroup.addStone(newStone);
+
+    this._stone_groups.add(newGroup);
+
     this._currentPlayer = this._currentPlayer.equals(this.playerOne)
       ? this.playerTwo
       : this.playerOne;
 
-    const winner = this.determineWinner();
+    if (this.isWinningGroup(newGroup)) {
+      this._state = GameState.COMPLETED;
+      this._winner = newGroup.player;
+    }
 
-    if (this.boardFull() && !winner) {
-      // draw
+    // draw if board full
+    if (this.boardFull()) {
       this._state = GameState.COMPLETED;
-    } else if (winner) {
-      this._state = GameState.COMPLETED;
-      this._winner = winner;
     }
   };
 
   private boardFull(): boolean {
-    const numStones = this._stones.size;
+    let numStones = 0;
+    for (const group of this._stone_groups.values()) {
+      numStones += group.stones.size;
+    }
     const boardSize = this._board.size;
     const numTilesOnBoard = 3 * boardSize * (boardSize - 1) + 1;
     return numTilesOnBoard === numStones;
   }
 
-  /**
-   * Uses DFS to find all stones which are in the same connected component as
-   * from.
-   *
-   * @param from The stone to start the search from.
-   * @param component The connected component to add to (should contain from)
-   * @param unvisitedStones The stones which have not been added to any connected
-   * component. Should not contain from. Should only contain stones with same
-   * owner as from.
-   */
-  private depthFirstSearch({
-    from,
-    component,
-    unvisitedStones
-  }: {
-    from: Stone;
-    component: ConnectedComponent;
-    unvisitedStones: Map<string, Stone>;
-  }): void {
-    for (const neighbor of this._board.getNeighbors(from.location)) {
-      const stoneAtNeighbor = unvisitedStones.get(neighbor.hash());
-      if (stoneAtNeighbor) {
-        unvisitedStones.delete(neighbor.hash());
-        component.addStone(stoneAtNeighbor);
-        this.depthFirstSearch({
-          from: stoneAtNeighbor,
-          component,
-          unvisitedStones
-        });
-      }
-    }
-  }
-
-  private getConnectedComponents = (player: Player): ConnectedComponent[] => {
-    const unvisitedStones: Map<string, Stone> = new Map(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      [...this._stones.entries()].filter(([hash, stone]) =>
-        stone.owner.equals(player)
-      )
+  private isWinningGroup = (stoneGroup: StoneGroup): boolean => {
+    return (
+      stoneGroup.numberCornerStones >= 2 || stoneGroup.sidesTouched.size >= 3
     );
-    const components: ConnectedComponent[] = [];
-
-    while (unvisitedStones.size > 0) {
-      const nextStone = unvisitedStones.values().next().value;
-      unvisitedStones.delete(nextStone.location.hash());
-
-      const nextComponent = new ConnectedComponent(this._board.size);
-      nextComponent.addStone(nextStone);
-
-      this.depthFirstSearch({
-        from: nextStone,
-        component: nextComponent,
-        unvisitedStones
-      });
-      components.push(nextComponent);
-    }
-    return components;
-  };
-
-  private componentIsWinner = (component: ConnectedComponent): boolean => {
-    if (component.numberCornerStones >= 2 || component.sidesTouched.size >= 3) {
-      return true;
-    }
-    //TODO check for ring
-    return false;
-  };
-
-  private determineWinner = (): Player | null => {
-    const componentPlayerOne = this.getConnectedComponents(this.playerOne);
-    if (
-      componentPlayerOne.find(component => this.componentIsWinner(component))
-    ) {
-      return this.playerOne;
-    }
-
-    const componentsPlayerTwo = this.getConnectedComponents(this.playerTwo);
-    if (
-      componentsPlayerTwo.find(component => this.componentIsWinner(component))
-    ) {
-      return this.playerTwo;
-    }
-
-    return null;
   };
 }
