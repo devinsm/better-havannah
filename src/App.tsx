@@ -9,6 +9,7 @@ import Board from 'components/Board';
 import InformationPanels from 'components/InformationPanels';
 import MessageBoard from 'components/MessageBoard';
 import ConfigForm from 'components/ConfigForm';
+import Confetti from 'components/Confetti';
 import { GameState } from 'services/GameController';
 
 const MAX_CONTENT_WIDTH_PX = 1100;
@@ -63,6 +64,7 @@ const App: React.ComponentType = () => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
+        <Confetti />
         <Typography variant="h1">Havannah</Typography>
         <InformationPanels classes={{ root: classes.infoPanels }} />
         {gameController.state === GameState.NOT_STARTED ? (
