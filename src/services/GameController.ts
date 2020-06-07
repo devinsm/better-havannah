@@ -11,13 +11,14 @@ export enum GameState {
   COMPLETED
 }
 
+/** Helper class to keep track of groups of connected stones */
 class StoneGroup {
-  board: BoardModel;
+  private board: BoardModel;
   /**use stone.location.hash() as key*/
   @observable
   stones: Map<string, Stone> = new Map();
-  numberCornerStones = 0;
-  sidesTouched: Set<BoardSide> = new Set();
+  private numberCornerStones = 0;
+  private sidesTouched: Set<BoardSide> = new Set();
 
   constructor(boardSize: number) {
     this.board = new BoardModel(boardSize);
@@ -42,6 +43,112 @@ class StoneGroup {
     }
 
     this.stones.set(stone.location.hash(), stone);
+  };
+
+  hasBridge = (): boolean => {
+    return this.numberCornerStones >= 2;
+  };
+
+  hasFork = (): boolean => {
+    return this.sidesTouched.size >= 3;
+  };
+
+  private getNeighborsInGroup = (cord: Coordinate): Coordinate[] => {
+    const allNeighbors = this.board.getNeighbors(cord);
+    return allNeighbors.filter(neighbor => this.stones.has(neighbor.hash()));
+  };
+
+  /**
+   * This detects a ring which passes through origin (which is the coordinate
+   * the search starts from). A ring must encircle a tile, so simply detecting
+   * cycles in our stone graph is not enough. The solution to this problem is
+   * to prevent the previous and the next tile in the search from being adjacent
+   * (i.e. avoid sharp turns). Intuitively this works since if the search turns
+   * as hard as it can to the left (or as hard as it can to the right), if it
+   * gets back to origin it is guaranteed to encircle a tile. When avoiding
+   * a sharp turn, we could have gone directly from the previous to the next
+   * stone. Thus the only things we can miss by avoiding sharp turns are
+   * trivial three stone cycles which we don't care about.
+   * @param prevLocation The previously visited location. Needed to avoid sharp
+   * turns.
+   * @param currentLocation The location we are currently searching from.
+   * @param origin The stone the search began with (if we make it back here then
+   * there is a ring)
+   * @param visited A set of the hashes of the locations we've been to already.
+   * origin should NOT be added to this set.
+   */
+  private detectRing = ({
+    prevLocation,
+    currentLocation,
+    origin,
+    visited
+  }: {
+    prevLocation: Coordinate;
+    currentLocation: Coordinate;
+    origin: Coordinate;
+    visited: Set<string>;
+  }): boolean => {
+    if (currentLocation.equals(origin)) {
+      return true;
+    }
+    visited.add(currentLocation.hash());
+
+    const neighborsOfPrev = this.getNeighborsInGroup(prevLocation);
+    const neighborsOfCurrent = this.getNeighborsInGroup(currentLocation);
+    for (const neighbor of neighborsOfCurrent) {
+      if (neighborsOfPrev.find(location => location.equals(neighbor))) {
+        // avoid sharp turns
+        continue;
+      }
+      if (neighbor.equals(prevLocation)) {
+        // can't go backwards
+        // this special case is needed because we don't put origin in visited
+        continue;
+      }
+      if (visited.has(neighbor.hash())) {
+        continue;
+      }
+      if (
+        this.detectRing({
+          prevLocation: currentLocation,
+          currentLocation: neighbor,
+          origin,
+          visited
+        })
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * In the controller we know which stone was most recently placed.
+   * Since we check for rings after each play, and end the game if there is
+   * a ring, any new ring will pass through the most recently placed stone.
+   * Therefore this method only checks for rings through a specific stone,
+   * so that the controller code can make use of it's special knowledge.
+   */
+  hasRingThrough = (stone: Stone): boolean => {
+    if (
+      !this.stones.has(stone.location.hash()) ||
+      (this.player && !stone.owner.equals(this.player))
+    ) {
+      throw Error(`group does not contain stone`);
+    }
+    for (const neighbor of this.getNeighborsInGroup(stone.location)) {
+      if (
+        this.detectRing({
+          prevLocation: stone.location,
+          currentLocation: neighbor,
+          origin: stone.location,
+          visited: new Set()
+        })
+      ) {
+        return true;
+      }
+    }
+    return false;
   };
 }
 
@@ -169,7 +276,11 @@ export default class GameController {
       ? this.playerTwo
       : this.playerOne;
 
-    if (this.isWinningGroup(newGroup)) {
+    if (
+      newGroup.hasBridge() ||
+      newGroup.hasFork() ||
+      newGroup.hasRingThrough(newStone)
+    ) {
       this._state = GameState.COMPLETED;
       this._winner = newGroup.player;
     }
@@ -189,10 +300,4 @@ export default class GameController {
     const numTilesOnBoard = 3 * boardSize * (boardSize - 1) + 1;
     return numTilesOnBoard === numStones;
   }
-
-  private isWinningGroup = (stoneGroup: StoneGroup): boolean => {
-    return (
-      stoneGroup.numberCornerStones >= 2 || stoneGroup.sidesTouched.size >= 3
-    );
-  };
 }
