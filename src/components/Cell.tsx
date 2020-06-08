@@ -14,14 +14,17 @@ import BoardModel from 'models/Board';
 import Stone from './Stone';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const styles = (theme: Theme) =>
+const styles = ({ palette }: Theme) =>
   createStyles({
     root: {
-      fill: theme.palette.background.paper,
-      stroke: theme.palette.common.black,
+      fill: palette.background.paper,
+      stroke: palette.common.black,
       '&:focus': {
-        fill: theme.palette.grey['300'],
         outline: 0
+      },
+      '&:focus polygon': {
+        fill: palette.action.active,
+        opacity: palette.action.activatedOpacity
       },
       cursor: 'pointer'
     },
