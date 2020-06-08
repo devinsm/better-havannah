@@ -4,8 +4,7 @@ import {
   ExpansionPanelDetails,
   ExpansionPanelSummary,
   Typography,
-  Grid,
-  Box
+  Grid
 } from '@material-ui/core';
 import {
   withStyles,
@@ -25,29 +24,35 @@ the two rightmost corners.
 `;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const styles = ({ typography, spacing, breakpoints }: Theme) =>
+const styles = ({ typography, spacing, breakpoints, palette }: Theme) =>
   createStyles({
     root: {
       width: '100%'
     },
     details: {
-      fontSize: typography.subtitle1.fontSize
+      fontSize: typography.subtitle1.fontSize,
+      '& p': {
+        marginBottom: spacing(2)
+      }
     },
     shortcutList: {
       listStyle: 'none',
       margin: 0,
+      marginBottom: spacing(3),
       padding: 0
     },
     shortcutListItem: {
       marginBottom: '0.5rem'
     },
     shortcutKey: {
-      background: 'rgb(242, 242, 242)',
+      background: palette.background.default,
       display: 'inline-block',
       fontFamily: "'Roboto Mono', monospace",
-      marginRight: spacing(1),
       paddingRight: spacing(1),
       paddingLeft: spacing(1)
+    },
+    shortcutDescription: {
+      marginLeft: spacing(1)
     },
     winStatesFigCaption: {
       display: 'flex',
@@ -107,21 +112,21 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
         <ExpansionPanelDetails classes={{ root: classes.details }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={9}>
-              <Box component="p" mt={0}>
+              <Typography variant="body1">
                 Havannah is a bit like Connect Four on steroids. It&apos;s a two
                 player game where players alternate placing stones on a
                 hexagonal board. The board itself is made up of hexagonal cells,
                 and each cell can have at most one stone. Once placed, stones
                 are never moved.
-              </Box>
-              <p>
+              </Typography>
+              <Typography variant="body1">
                 A player wins by making one of three shapes with their stones: a
                 fork, a bridge, or a ring. A fork is a group of stones which
                 connect three sides of the board. A bridge is a group of stones
                 which connect two corners of the board. A ring is a group of
                 stones which form a loop around one or more cells (whether or
                 not the enclosed cells have stones).
-              </p>
+              </Typography>
             </Grid>
             <Grid item container justify="center" xs={12} md={3}>
               <figcaption className={classes.winStatesFigCaption}>
@@ -148,14 +153,19 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
         <ExpansionPanelDetails classes={{ root: classes.details }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={9}>
-              <Box component="p" mt={0}>
-                The following shortcuts can be used to navigate the board:
-              </Box>
+              <Typography variant="body1">
+                <span className={classes.shortcutKey}>Enter</span> or{' '}
+                <span className={classes.shortcutKey}> Space </span> can be used
+                to place a stone. To navigate the board, use any of the
+                following shortcuts:
+              </Typography>
               <ul className={classes.shortcutList}>
                 {SHORTCUTS.map(shortCut => (
                   <li key={shortCut.key} className={classes.shortcutListItem}>
                     <span className={classes.shortcutKey}>{shortCut.key}</span>
-                    <span>{shortCut.actionDescription}</span>
+                    <span className={classes.shortcutDescription}>
+                      {shortCut.actionDescription}
+                    </span>
                   </li>
                 ))}
               </ul>
