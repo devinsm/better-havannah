@@ -27,11 +27,11 @@ const MessageBoard: React.ComponentType<MessageBoardProps> = ({
     <div aria-live="assertive" className={classes.root}>
       <Typography variant="h2" component="p" className={classes.message}>
         {gameController.state === GameState.IN_PROGRESS && (
-          <>{gameController.currentPlayer.displayName()}&apos;s Turn</>
+          <>Player {gameController.currentPlayer.displayName()}&apos;s Turn</>
         )}
         {gameController.state === GameState.COMPLETED &&
           gameController.winner && (
-            <>{gameController.winner.displayName()} Wins!</>
+            <>Player {gameController.winner.displayName()} Wins!</>
           )}
         {gameController.state === GameState.COMPLETED &&
           gameController.winner === null && <>You tied -_-</>}

@@ -28,7 +28,7 @@ const Stone: React.ComponentType<StoneProps> = ({
     ? theme.stoneColors.one
     : theme.stoneColors.two;
 
-  const gradientId = `stone-radial-gradient-${center.x}-${center.y}`;
+  const gradientId = `stone-radial-gradient-${center.x}-${center.y}-${player.id}`;
   return (
     <g aria-label="stone">
       <defs>

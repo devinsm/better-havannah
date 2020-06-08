@@ -36,7 +36,8 @@ const WrappedApp: React.ComponentType = () => {
               fontFamily: headerFontFamily,
               fontSize: '2rem'
             },
-            subtitle1: {
+            h3: {
+              fontFamily: headerFontFamily,
               fontSize: '1.5rem'
             }
           },

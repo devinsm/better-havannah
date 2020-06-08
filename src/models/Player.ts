@@ -6,7 +6,7 @@ export default class Player {
     this.id = id;
   }
 
-  displayName = (): string => `Player ${startCase(this.id)}`;
+  displayName = (): string => startCase(this.id);
 
   equals(other: Player): boolean {
     return this.id === other.id;

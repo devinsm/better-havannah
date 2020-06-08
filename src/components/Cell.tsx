@@ -24,7 +24,8 @@ const styles = ({ palette }: Theme) =>
       },
       '&:focus polygon': {
         fill: palette.action.active,
-        opacity: palette.action.activatedOpacity
+        fillOpacity: palette.action.activatedOpacity,
+        strokeOpacity: 1
       },
       cursor: 'pointer'
     },

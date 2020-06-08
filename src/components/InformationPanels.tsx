@@ -24,13 +24,12 @@ the two rightmost corners.
 `;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const styles = ({ typography, spacing, breakpoints, palette }: Theme) =>
+const styles = ({ spacing, breakpoints, palette }: Theme) =>
   createStyles({
     root: {
       width: '100%'
     },
     details: {
-      fontSize: typography.subtitle1.fontSize,
       '& p': {
         marginBottom: spacing(2)
       }
@@ -159,7 +158,11 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
                 to place a stone. To navigate the board, use any of the
                 following shortcuts:
               </Typography>
-              <ul className={classes.shortcutList}>
+              <Typography
+                variant="body1"
+                component="ul"
+                className={classes.shortcutList}
+              >
                 {SHORTCUTS.map(shortCut => (
                   <li key={shortCut.key} className={classes.shortcutListItem}>
                     <span className={classes.shortcutKey}>{shortCut.key}</span>
@@ -168,7 +171,7 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
                     </span>
                   </li>
                 ))}
-              </ul>
+              </Typography>
             </Grid>
           </Grid>
         </ExpansionPanelDetails>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Typography } from '@material-ui/core';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import debounce from 'lodash/debounce';
 import { observer } from 'mobx-react';
 
@@ -10,14 +10,15 @@ import InformationPanels from 'components/InformationPanels';
 import MessageBoard from 'components/MessageBoard';
 import ConfigForm from 'components/ConfigForm';
 import Confetti from 'components/Confetti';
+import Roster from 'components/Roster';
 import { GameState } from 'services/GameController';
 
 const MAX_CONTENT_WIDTH_PX = 1100;
 const CONTENT_PADDING_PX = 16;
-const useAppStyles = makeStyles(theme =>
+const useAppStyles = makeStyles(({ palette, spacing, zIndex }: Theme) =>
   createStyles({
     root: {
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: palette.background.default,
       minHeight: '100%',
       padding: '1px 0',
       display: 'flex',
@@ -31,14 +32,24 @@ const useAppStyles = makeStyles(theme =>
       alignItems: 'center'
     },
     infoPanels: {
-      marginBottom: theme.spacing(5),
-      marginTop: theme.spacing(4)
+      marginBottom: spacing(5),
+      marginTop: spacing(4)
     },
     configForm: {
-      marginBottom: theme.spacing(8)
+      marginBottom: spacing(8)
     },
-    messageBoard: {
-      marginBottom: theme.spacing(8)
+    roster: {
+      position: 'absolute',
+      zIndex: zIndex.snackbar,
+      top: 0,
+      left: 0
+    },
+    messageBoardContainer: {
+      position: 'relative',
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      marginBottom: spacing(8)
     }
   })
 );
@@ -70,7 +81,10 @@ const App: React.ComponentType = () => {
         {gameController.state === GameState.NOT_STARTED ? (
           <ConfigForm classes={{ root: classes.configForm }} />
         ) : (
-          <MessageBoard classes={{ root: classes.messageBoard }} />
+          <div className={classes.messageBoardContainer}>
+            <Roster classes={{ root: classes.roster }} />
+            <MessageBoard />
+          </div>
         )}
         <Board widthPx={boardWidthPx} />
       </div>
