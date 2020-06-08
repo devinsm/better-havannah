@@ -15,14 +15,23 @@ import {
 } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+import winStatesImg from 'assets/Havannah_winning_structures.svg';
+
+const winStatesAlt = `
+A base 8 board is shown displaying all three win states. On the left, a fork is \
+shown connecting the upper two sides and the bottom left side. In the center a \
+ring is shown encircling three cells. On the right a bridge is shown connecting \
+the two rightmost corners.
+`;
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const styles = (theme: Theme) =>
+const styles = ({ typography, spacing, breakpoints }: Theme) =>
   createStyles({
     root: {
       width: '100%'
     },
     details: {
-      fontSize: theme.typography.subtitle1.fontSize
+      fontSize: typography.subtitle1.fontSize
     },
     shortcutList: {
       listStyle: 'none',
@@ -36,9 +45,25 @@ const styles = (theme: Theme) =>
       background: 'rgb(242, 242, 242)',
       display: 'inline-block',
       fontFamily: "'Roboto Mono', monospace",
-      marginRight: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      paddingLeft: theme.spacing(1)
+      marginRight: spacing(1),
+      paddingRight: spacing(1),
+      paddingLeft: spacing(1)
+    },
+    winStatesFigCaption: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    },
+    winStatesImg: {
+      width: '100%',
+      maxWidth: '300px',
+      [breakpoints.up('md')]: {
+        height: '182.25px',
+        width: '157.95px'
+      }
+    },
+    winStatesCaption: {
+      textAlign: 'center'
     }
   });
 export type InformationPanelsProps = WithStyles<typeof styles>;
@@ -98,10 +123,17 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
                 not the enclosed cells have stones).
               </p>
             </Grid>
-            <Grid item xs={12} md={3}>
-              <Grid item>
-                <p>image of fork, bridge, and loop goes here</p>
-              </Grid>
+            <Grid item container justify="center" xs={12} md={3}>
+              <figcaption className={classes.winStatesFigCaption}>
+                <img
+                  src={winStatesImg}
+                  alt={winStatesAlt}
+                  className={classes.winStatesImg}
+                />
+                <figcaption className={classes.winStatesCaption}>
+                  From left to right: a fork, a ring, and a bridge.
+                </figcaption>
+              </figcaption>
             </Grid>
           </Grid>
         </ExpansionPanelDetails>
