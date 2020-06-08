@@ -20,7 +20,13 @@ const WrappedApp: React.ComponentType = () => {
       responsiveFontSizes(
         createTheme({
           palette: {
-            type: prefersDarkMode ? 'dark' : 'light'
+            type: prefersDarkMode ? 'dark' : 'light',
+            primary: {
+              main: prefersDarkMode ? '#b794f6' : '#3f51b5'
+            },
+            secondary: {
+              main: prefersDarkMode ? '#c6f68d' : '#f50057'
+            }
           },
           typography: {
             h1: {
@@ -30,12 +36,13 @@ const WrappedApp: React.ComponentType = () => {
               fontFamily: headerFontFamily,
               fontSize: '2rem'
             },
-            h3: {},
-            h4: {},
-            h5: {},
-            h6: {},
             subtitle1: {
               fontSize: '1.5rem'
+            }
+          },
+          props: {
+            MuiTypography: {
+              color: 'textPrimary'
             }
           }
         })
