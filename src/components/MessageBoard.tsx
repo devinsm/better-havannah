@@ -26,9 +26,19 @@ const MessageBoard: React.ComponentType<MessageBoardProps> = ({
   return (
     <div aria-live="assertive" className={classes.root}>
       <Typography variant="h2" component="p" className={classes.message}>
-        {gameController.state === GameState.IN_PROGRESS && (
-          <>Player {gameController.currentPlayer.displayName()}&apos;s Turn</>
-        )}
+        {/*
+         * In order for screen readers to read the whole message when it
+         * changes, the whole text needs to be re-rendered. As a result there
+         * is a bit of code duplication in the next two conditional blocks
+         */}
+        {gameController.state === GameState.IN_PROGRESS &&
+          gameController.currentPlayer.equals(gameController.playerOne) && (
+            <>Player One&apos;s Turn</>
+          )}
+        {gameController.state === GameState.IN_PROGRESS &&
+          gameController.currentPlayer.equals(gameController.playerTwo) && (
+            <>Player Two&apos;s Turn</>
+          )}
         {gameController.state === GameState.COMPLETED &&
           gameController.winner && (
             <>Player {gameController.winner.displayName()} Wins!</>

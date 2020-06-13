@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import 'mobx-react/batchingForReactDom';
 
 import App from './App';
-import { ServiceContext } from 'services/ServiceContainer';
+import DarkModeSwitch from 'components/DarkModeSwitch';
+import { ServiceContext, Services } from 'services/ServiceContainer';
 import GameController from 'services/GameController';
 import * as serviceWorker from './serviceWorker';
 import createTheme from 'styles/createTheme';
@@ -13,19 +13,22 @@ import createTheme from 'styles/createTheme';
 require('typeface-berkshire-swash');
 
 const WrappedApp: React.ComponentType = () => {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const services = useMemo<Services>(() => {
+    return { gameController: new GameController() };
+  }, []);
+  const [inDarkMode, setInDarkMode] = useState<boolean>(false);
   const headerFontFamily = "'Berkshire Swash', cursive";
   const theme = React.useMemo(
     () =>
       responsiveFontSizes(
         createTheme({
           palette: {
-            type: prefersDarkMode ? 'dark' : 'light',
+            type: inDarkMode ? 'dark' : 'light',
             primary: {
-              main: prefersDarkMode ? '#b794f6' : '#3f51b5'
+              main: inDarkMode ? '#b794f6' : '#3f51b5'
             },
             secondary: {
-              main: prefersDarkMode ? '#c6f68d' : '#f50057'
+              main: inDarkMode ? '#c6f68d' : '#f50057'
             }
           },
           typography: {
@@ -48,12 +51,16 @@ const WrappedApp: React.ComponentType = () => {
           }
         })
       ),
-    [prefersDarkMode]
+    [inDarkMode]
   );
 
   return (
     <ThemeProvider theme={theme}>
-      <ServiceContext.Provider value={{ gameController: new GameController() }}>
+      <ServiceContext.Provider value={services}>
+        <DarkModeSwitch
+          inDarkMode={inDarkMode}
+          toggleInDarkMode={(): void => setInDarkMode(!inDarkMode)}
+        />
         <App />
       </ServiceContext.Provider>
     </ThemeProvider>
