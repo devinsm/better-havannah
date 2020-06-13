@@ -174,9 +174,9 @@ const Cell: React.ComponentType<CellProps> = ({
 
   let label = `Cell ${location.file}${location.rank}`;
   if (stoneForTile) {
-    label += ` (contains ${
-      stoneForTile.owner.id === 'one' ? 'your' : "opponent's"
-    } stone)`;
+    label += ` (has player ${stoneForTile.owner
+      .displayName()
+      .toLocaleLowerCase()}'s stone)`;
   }
 
   const handleClick = (): void => {

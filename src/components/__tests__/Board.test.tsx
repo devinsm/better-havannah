@@ -433,21 +433,21 @@ test('hitting other keys does not place stone', () => {
 
 test('stones shown appropriately', () => {
   const gameController = MockGameController({ boardSize: 5 });
-  const cordWithOurStone = new Coordinate({ file: 'c', rank: 4 });
-  const cordWithTheirStone = new Coordinate({ file: 'a', rank: 2 });
+  const cordWithOnesStone = new Coordinate({ file: 'c', rank: 4 });
+  const cordWithTwosStone = new Coordinate({ file: 'a', rank: 2 });
   const cordWithNoStone = new Coordinate({ file: 'e', rank: 4 });
   (gameController.getStone as jest.Mock).mockImplementation((cord: Coordinate):
     | Stone
     | undefined => {
-    if (cord.equals(cordWithOurStone)) {
+    if (cord.equals(cordWithOnesStone)) {
       return new Stone({
-        location: cordWithOurStone,
+        location: cordWithOnesStone,
         owner: new Player('one')
       });
     }
-    if (cord.equals(cordWithTheirStone)) {
+    if (cord.equals(cordWithTwosStone)) {
       return new Stone({
-        location: cordWithOurStone,
+        location: cordWithOnesStone,
         owner: new Player('two')
       });
     }
@@ -458,12 +458,12 @@ test('stones shown appropriately', () => {
     services: { gameController }
   });
 
-  const cellWithOurStone = getCell({
-    cord: cordWithOurStone,
+  const cellWithOnesStone = getCell({
+    cord: cordWithOnesStone,
     getByLabelText
   });
-  const cellWithTheirStone = getCell({
-    cord: cordWithTheirStone,
+  const cellWithTwosStone = getCell({
+    cord: cordWithTwosStone,
     getByLabelText
   });
   const cellWithNoStone = getCell({
@@ -474,18 +474,18 @@ test('stones shown appropriately', () => {
   const labelPrefix = (cord: Coordinate): string =>
     `Cell ${cord.file}${cord.rank}`;
 
-  expect(cellWithOurStone.getAttribute('aria-label')).toBe(
-    `${labelPrefix(cordWithOurStone)} (contains your stone)`
+  expect(cellWithOnesStone.getAttribute('aria-label')).toBe(
+    `${labelPrefix(cordWithOnesStone)} (has player one's stone)`
   );
-  expect(cellWithTheirStone.getAttribute('aria-label')).toBe(
-    `${labelPrefix(cordWithTheirStone)} (contains opponent's stone)`
+  expect(cellWithTwosStone.getAttribute('aria-label')).toBe(
+    `${labelPrefix(cordWithTwosStone)} (has player two's stone)`
   );
   expect(cellWithNoStone.getAttribute('aria-label')).toBe(
     `${labelPrefix(cordWithNoStone)}`
   );
 
-  const { queryByLabelText: queryOurStone } = within(cellWithOurStone);
-  const { queryByLabelText: queryTheirStone } = within(cellWithTheirStone);
+  const { queryByLabelText: queryOurStone } = within(cellWithOnesStone);
+  const { queryByLabelText: queryTheirStone } = within(cellWithTwosStone);
   const { queryByLabelText: queryNoStone } = within(cellWithNoStone);
   const ourStone = queryOurStone('stone');
   expect(ourStone).toBeDefined();
