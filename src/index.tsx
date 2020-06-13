@@ -9,6 +9,7 @@ import { ServiceContext, Services } from 'services/ServiceContainer';
 import GameController from 'services/GameController';
 import * as serviceWorker from './serviceWorker';
 import createTheme from 'styles/createTheme';
+import GitHubLink from 'components/GitHubLink';
 
 require('typeface-berkshire-swash');
 
@@ -61,6 +62,7 @@ const WrappedApp: React.ComponentType = () => {
           inDarkMode={inDarkMode}
           toggleInDarkMode={(): void => setInDarkMode(!inDarkMode)}
         />
+        <GitHubLink />
         <App />
       </ServiceContext.Provider>
     </ThemeProvider>
