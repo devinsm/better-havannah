@@ -104,8 +104,12 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
 }: InformationPanelsProps) => {
   return (
     <div className={classes.root}>
-      <ExpansionPanel aria-controls="rules-content" id="rules-header">
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="rules-content"
+          id="rules-header"
+        >
           <Typography variant="h2">Rules</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails classes={{ root: classes.details }}>
@@ -142,11 +146,12 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
           </Grid>
         </ExpansionPanelDetails>
       </ExpansionPanel>
-      <ExpansionPanel
-        aria-controls="keyboard-nav-content"
-        id="keyboard-nav-header"
-      >
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="keyboard-nav-content"
+          id="keyboard-nav-header"
+        >
           <Typography variant="h2">Keyboard Shortcuts</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails classes={{ root: classes.details }}>

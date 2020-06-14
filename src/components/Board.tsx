@@ -16,10 +16,7 @@ import BoardModel from 'models/Board';
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const styles = () =>
   createStyles({
-    root: {
-      filter:
-        'drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.2)) drop-shadow(0px 8px 10px rgba(0,0,0,0.14)) drop-shadow(0px 3px 14px rgba(0,0,0,0.12))'
-    }
+    root: {}
   });
 
 export interface BoardProps extends WithStyles<typeof styles> {
