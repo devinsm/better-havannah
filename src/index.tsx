@@ -5,6 +5,7 @@ import 'mobx-react/batchingForReactDom';
 
 import App from './App';
 import DarkModeSwitch from 'components/DarkModeSwitch';
+import Confetti from 'components/Confetti';
 import { ServiceContext, Services } from 'services/ServiceContainer';
 import GameController from 'services/GameController';
 import * as serviceWorker from './serviceWorker';
@@ -58,6 +59,7 @@ const WrappedApp: React.ComponentType = () => {
   return (
     <ThemeProvider theme={theme}>
       <ServiceContext.Provider value={services}>
+        <Confetti />
         <DarkModeSwitch
           inDarkMode={inDarkMode}
           toggleInDarkMode={(): void => setInDarkMode(!inDarkMode)}

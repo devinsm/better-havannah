@@ -40,7 +40,9 @@ const ConfettiAnimation: React.ComponentType<ConfettiAnimationProps> = ({
       target: canvasId,
       max: 2000,
       respawn: false,
-      props: ['triangle']
+      props: ['triangle'],
+      width: document.body.scrollWidth,
+      height: document.body.scrollHeight
     };
     const confetti = new ConfettiGenerator(confettiSettings);
     confetti.render();
