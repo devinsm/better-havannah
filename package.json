@@ -64,7 +64,8 @@
     "typescript": "^3.7.5"
   },
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "proseWrap": "always"
   },
   "husky": {
     "hooks": {
