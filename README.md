@@ -1,7 +1,7 @@
 # (Better) Havannah
 
-The board game Havannah brought to the browser. The live version is available at
-[havannahgame.com](https://havannahgame.com).
+The board game Havannah brought to the browser. The live version is available
+[https://havannah.devinmcallester.vercel.app](here).
 
 ## Project Goals
 
