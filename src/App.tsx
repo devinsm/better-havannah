@@ -30,6 +30,9 @@ const useAppStyles = makeStyles(({ palette, spacing, zIndex }: Theme) =>
       flexDirection: 'column',
       alignItems: 'center'
     },
+    header: {
+      marginTop: spacing(4)
+    },
     infoPanels: {
       marginBottom: spacing(5),
       marginTop: spacing(4)
@@ -74,7 +77,9 @@ const App: React.ComponentType = () => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        <Typography variant="h1">Havannah</Typography>
+        <Typography variant="h1" className={classes.header}>
+          Havannah
+        </Typography>
         <InformationPanels classes={{ root: classes.infoPanels }} />
         {gameController.state === GameState.NOT_STARTED ? (
           <ConfigForm classes={{ root: classes.configForm }} />
