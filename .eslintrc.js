@@ -15,7 +15,7 @@ module.exports = {
     'plugin:jest/recommended',
     'prettier/@typescript-eslint'
   ],
-  ignorePatterns: ['src/serviceWorker.ts'],
+  ignorePatterns: [],
   settings: {
     react: {
       version: 'detect'
