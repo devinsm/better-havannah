@@ -1,5 +1,8 @@
 # (Better) Havannah
 
+[![Build Status](https://travis-ci.org/devinsm/better-havannah.svg?branch=master)](https://travis-ci.org/devinsm/better-havannah)
+[![Coverage Status](https://coveralls.io/repos/github/devinsm/better-havannah/badge.svg?branch=master)](https://coveralls.io/github/devinsm/better-havannah?branch=master)
+
 The board game Havannah brought to the browser. The live version is available
 [here](https://havannah.devinmcallester.vercel.app).
 
