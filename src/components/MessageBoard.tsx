@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
 import { observer } from 'mobx-react';
 import { Typography } from '@material-ui/core';
+import clsx from 'clsx';
 
 import { ServiceContext, Services } from 'services/ServiceContainer';
 import { GameState } from 'services/GameController';
@@ -17,14 +18,17 @@ const styles = () =>
     }
   });
 
-export type MessageBoardProps = WithStyles<typeof styles>;
+export interface MessageBoardProps extends WithStyles<typeof styles> {
+  className?: string;
+}
 
 const MessageBoard: React.ComponentType<MessageBoardProps> = ({
+  className,
   classes
 }: MessageBoardProps) => {
   const { gameController } = useContext(ServiceContext) as Services;
   return (
-    <div aria-live="assertive" className={classes.root}>
+    <div aria-live="assertive" className={clsx(classes.root, className)}>
       <Typography variant="h2" component="p" className={classes.message}>
         {/*
          * In order for screen readers to read the whole message when it

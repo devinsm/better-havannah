@@ -14,46 +14,59 @@ import { GameState } from 'services/GameController';
 
 const MAX_CONTENT_WIDTH_PX = 1100;
 const CONTENT_PADDING_PX = 16;
-const useAppStyles = makeStyles(({ palette, spacing, zIndex }: Theme) =>
-  createStyles({
-    root: {
-      backgroundColor: palette.background.default,
-      minHeight: '100%',
-      padding: '1px 0',
-      display: 'flex',
-      justifyContent: 'center'
-    },
-    content: {
-      maxWidth: `${MAX_CONTENT_WIDTH_PX}px`,
-      padding: `${CONTENT_PADDING_PX}px`,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
-    },
-    header: {
-      marginTop: spacing(4)
-    },
-    infoPanels: {
-      marginBottom: spacing(5),
-      marginTop: spacing(4)
-    },
-    configForm: {
-      marginBottom: spacing(8)
-    },
-    roster: {
-      position: 'absolute',
-      zIndex: zIndex.snackbar,
-      top: 0,
-      left: 0
-    },
-    messageBoardContainer: {
-      position: 'relative',
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      marginBottom: spacing(8)
-    }
-  })
+const useAppStyles = makeStyles(
+  ({ palette, spacing, zIndex, breakpoints }: Theme) =>
+    createStyles({
+      root: {
+        backgroundColor: palette.background.default,
+        minHeight: '100%',
+        padding: '1px 0',
+        display: 'flex',
+        justifyContent: 'center'
+      },
+      content: {
+        maxWidth: `${MAX_CONTENT_WIDTH_PX}px`,
+        padding: `${CONTENT_PADDING_PX}px`,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      },
+      header: {
+        marginTop: spacing(4)
+      },
+      infoPanels: {
+        marginBottom: spacing(5),
+        marginTop: spacing(4)
+      },
+      configForm: {
+        marginBottom: spacing(8)
+      },
+      roster: {
+        [breakpoints.up('sm')]: {
+          position: 'absolute',
+          zIndex: zIndex.snackbar,
+          top: 0,
+          left: 0
+        }
+      },
+      messageBoardContainer: {
+        position: 'relative',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: spacing(8),
+        [breakpoints.down('xs')]: {
+          flexDirection: 'column'
+        }
+      },
+      messageBoard: {
+        [breakpoints.down('xs')]: {
+          marginTop: spacing(3),
+          display: 'flex',
+          justifyContent: 'center'
+        }
+      }
+    })
 );
 
 const App: React.ComponentType = () => {
@@ -86,7 +99,7 @@ const App: React.ComponentType = () => {
         ) : (
           <div className={classes.messageBoardContainer}>
             <Roster classes={{ root: classes.roster }} />
-            <MessageBoard />
+            <MessageBoard className={classes.messageBoard} />
           </div>
         )}
         <Board widthPx={boardWidthPx} />

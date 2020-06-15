@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core/styles';
 import { observer } from 'mobx-react';
 import { Card, CardContent, Typography } from '@material-ui/core';
+import clsx from 'clsx';
 
 import { ServiceContext, Services } from 'services/ServiceContainer';
 import Stone from './Stone';
@@ -41,13 +42,18 @@ const styles = ({ spacing }: Theme) =>
     }
   });
 
-export type RosterProps = WithStyles<typeof styles>;
+export interface RosterProps extends WithStyles<typeof styles> {
+  className?: string;
+}
 
-const Roster: React.ComponentType<RosterProps> = ({ classes }: RosterProps) => {
+const Roster: React.ComponentType<RosterProps> = ({
+  classes,
+  className
+}: RosterProps) => {
   const { gameController } = useContext(ServiceContext) as Services;
   const players = [gameController.playerOne, gameController.playerTwo];
   return (
-    <Card aria-hidden="true" className={classes.root}>
+    <Card aria-hidden="true" className={clsx(classes.root, className)}>
       <CardContent className={classes.content}>
         <Typography variant="h3" component="h2" className={classes.header}>
           Players
