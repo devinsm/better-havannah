@@ -1,5 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import { createTransformer } from 'mobx-utils';
+import confetti, { Options } from 'canvas-confetti';
+
 import BoardModel, { BoardSide } from 'models/Board';
 import Player from 'models/Player';
 import Stone from 'models/Stone';
@@ -283,12 +285,51 @@ export default class GameController {
     ) {
       this._state = GameState.COMPLETED;
       this._winner = newGroup.player;
+      this.fireConfetti();
     }
 
     // draw if board full
     if (this.boardFull()) {
       this._state = GameState.COMPLETED;
+      this.fireConfetti();
     }
+  };
+
+  private fireConfetti = (): void => {
+    const count = 1000;
+    const defaults: Options & { disableForReducedMotion: boolean } = {
+      origin: { y: 0.7 },
+      disableForReducedMotion: true
+    };
+
+    function fire(particleRatio: number, opts: Options): void {
+      confetti(
+        Object.assign({}, defaults, opts, {
+          particleCount: Math.floor(count * particleRatio)
+        })
+      );
+    }
+
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55
+    });
+    fire(0.2, {
+      spread: 60
+    });
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45
+    });
   };
 
   private boardFull(): boolean {

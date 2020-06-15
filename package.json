@@ -5,9 +5,10 @@
   "dependencies": {
     "@material-ui/core": "^4.9.2",
     "@material-ui/icons": "^4.9.1",
+    "@types/canvas-confetti": "^1.0.0",
     "axios": "^0.19.2",
+    "canvas-confetti": "^1.2.0",
     "clsx": "^1.1.0",
-    "confetti-js": "0.0.18",
     "lodash": "^4.17.15",
     "mobx": "^5.15.4",
     "mobx-react": "^6.1.5",

@@ -6,6 +6,11 @@ import Coordinate from 'models/Coordinate';
 import Stone from 'models/Stone';
 import Player from 'models/Player';
 
+// Mocked because jsdom does not implement the canvas API by default
+// Since we are not testing the firing of confetti here, we simply mock the
+// canvas so that the confetti firing code does nothing
+HTMLCanvasElement.prototype.getContext = jest.fn();
+
 test('you can start the game', () => {
   const controller = new GameController();
   expect(controller.state).toBe(GameState.NOT_STARTED);
