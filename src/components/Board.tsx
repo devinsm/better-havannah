@@ -219,6 +219,11 @@ const Board: React.ComponentType<BoardProps> = ({
               setFocusableCell
             })
           }
+          handleClick={() => {
+            if (gameController.canPlaceStone(cord)) {
+              gameController.placeStone(cord);
+            }
+          }}
         />
       ))}
     </svg>

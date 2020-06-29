@@ -60,6 +60,7 @@ export interface CellProps extends WithStyles<typeof styles> {
    */
   tabIndex: number;
   onKeyDown: (event: KeyboardEvent<SVGElement>) => void;
+  handleClick: () => void;
 }
 
 type SvgCoordinate = { x: number; y: number };
@@ -177,6 +178,7 @@ const Cell: React.ComponentType<CellProps> = ({
   borderWidth,
   tabIndex,
   classes,
+  handleClick,
   onKeyDown
 }: CellProps) => {
   const { gameController } = useContext(ServiceContext) as Services;
@@ -190,12 +192,6 @@ const Cell: React.ComponentType<CellProps> = ({
       .displayName()
       .toLocaleLowerCase()}'s stone)`;
   }
-
-  const handleClick = (): void => {
-    if (!disabled) {
-      gameController.placeStone(location);
-    }
-  };
 
   const topLeft: SvgCoordinate = getSvgCoords({
     boardModel: gameController.board,
@@ -250,7 +246,7 @@ const Cell: React.ComponentType<CellProps> = ({
         }
         onKeyDown(event);
       }}
-      onClick={(): void => handleClick()}
+      onClick={handleClick}
       aria-disabled={disabled}
     >
       <polygon

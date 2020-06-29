@@ -15,6 +15,12 @@ module.exports = {
     'plugin:jest/recommended',
     'prettier/@typescript-eslint'
   ],
+  rules: {
+    '@typescript-eslint/explicit-function-return-type': [
+      'warn',
+      { allowExpressions: true }
+    ]
+  },
   ignorePatterns: [],
   settings: {
     react: {
