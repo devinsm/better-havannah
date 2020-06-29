@@ -49,16 +49,22 @@ function getBoardDimensions({
     cellSideLength: number;
   };
 } {
-  // Maximum length of a cell side in svg user units
-  // The thing to remember here is that the height of the board (excluding
-  // borders) is: sideLength * cos(30 degrees) * ( 4 * boardSize - 2)
-  // The height of the board (excluding the width of the border) is always
-  // (arbitrarily) set to 100 SVG user units. The whole SVG is then scaled
-  // using viewBox to get the desired pixel width.
+  // We make the overall height of the board 100 SVG user units and then
+  // set the cell side length to match. The math is a bit tricky, but
+  // using the fact that each cell is 2 * sideLength * cos(30 degrees) units
+  // tall, it can be shown that the overall height is:
+  // sideLength * cos(30 degrees) * ( 4 * boardSize - 2)
+  // Set that equal to 100 and solve for sideLength and you get the
+  // below formula
   const heightSvgUnits = 100;
   const cellSideLength =
     heightSvgUnits / (Math.cos((1 / 6) * Math.PI) * (4 * boardSize - 2));
 
+  // To get this formula start at the top left corner of the tile at the
+  // top left corner of the board. There x = cellSideLength * 0.5.
+  // From there trace the top of the board by hopping right one tile at a time.
+  // You will need to make 2 * boardSize - 1 such hops, and each time you
+  // will move 1.5 * cellSideLength units
   const widthSvgUnits =
     cellSideLength * 0.5 + (2 * boardSize - 1) * 1.5 * cellSideLength;
 

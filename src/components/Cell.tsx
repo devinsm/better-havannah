@@ -1,3 +1,12 @@
+/**
+ * NOTE: Because this component draws a regular hexagon, there's a lot of
+ * math in this module. The key thing to remember is that all sides of a
+ * regular hexagon are equal, and all interior angles are 120 degrees. Using
+ * those two facts, you can show that the horizontal distance from the left
+ * most corner to the top left corner is 0.5 * cellSideLength. You can also
+ * show that the height is 2 * cellSideLength * cos(30 degrees). All of the
+ * rest of the math pretty much falls into place after that.
+ */
 import React, { useContext, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
 import {
@@ -85,18 +94,21 @@ function fileStartingCoords({
   const halfHeight = 0.5 * cellHeight;
 
   if (fileIndex >= boardModel.size - 1) {
+    const yOfTopMostFile = (boardModel.size - 1) * halfHeight;
+    const indexOfTopMostFile = 2 * boardModel.size - 2;
     return {
       x: halfLength,
-      y:
-        (boardModel.size - 1) * halfHeight +
-        (2 * boardModel.size - 2 - fileIndex) * cellHeight
+      y: yOfTopMostFile + (indexOfTopMostFile - fileIndex) * cellHeight
     };
   } else {
-    const distanceFromCorner = boardModel.size - 1 - fileIndex;
+    const xOfBottomLeftCornerTile = halfLength;
+    const yOfBottomLeftCornerTile = halfHeight * (3 * boardModel.size - 3);
+    const indexDistFromBottomLeftCorner = boardModel.size - 1 - fileIndex;
     return {
-      x: distanceFromCorner * 1.5 * cellSideLength + halfLength,
-      y:
-        distanceFromCorner * halfHeight + halfHeight * (3 * boardModel.size - 3)
+      x:
+        indexDistFromBottomLeftCorner * 1.5 * cellSideLength +
+        xOfBottomLeftCornerTile,
+      y: indexDistFromBottomLeftCorner * halfHeight + yOfBottomLeftCornerTile
     };
   }
 }
