@@ -10,7 +10,7 @@ import createTheme from 'styles/createTheme';
 
 const getAppWrapper = ({
   services,
-  theme
+  theme = createTheme()
 }: {
   services: Services;
   theme?: Theme;
@@ -21,7 +21,7 @@ const getAppWrapper = ({
     children?: React.ReactNode;
   }): React.ReactElement => {
     return (
-      <ThemeProvider theme={theme || createTheme()}>
+      <ThemeProvider theme={theme}>
         <ServiceContext.Provider value={services}>
           {children}
         </ServiceContext.Provider>
