@@ -1,7 +1,12 @@
 import React from 'react';
-import { within, fireEvent, Matcher } from '@testing-library/dom';
 import Coordinate from 'models/Coordinate';
-import { render, MockGameController } from 'test-utils';
+import {
+  render,
+  MockGameController,
+  within,
+  fireEvent,
+  Matcher
+} from 'test-utils';
 
 import Board from '../Board';
 import Player from 'models/Player';
@@ -413,7 +418,10 @@ test('can click cell using space bar', () => {
   testPlaceStone({
     gameController,
     cord: new Coordinate({ file: 'c', rank: 5 }),
-    fireClickEvent: el => fireEvent.keyDown(el, { key: ' ' }),
+    fireClickEvent: el => {
+      fireEvent.keyDown(el, { key: ' ' });
+      fireEvent.keyUp(el, { key: ' ' });
+    },
     shouldSucceed: true
   });
 });

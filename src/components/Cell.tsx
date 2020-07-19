@@ -9,13 +9,13 @@
  */
 import React, { useContext, KeyboardEvent } from 'react';
 import { observer } from 'mobx-react';
+import { ButtonBase } from '@material-ui/core';
 import {
   withStyles,
   WithStyles,
   Theme,
   createStyles
 } from '@material-ui/core/styles';
-import clsx from 'clsx';
 
 import Coordinate from 'models/Coordinate';
 import { ServiceContext, Services } from 'services/ServiceContainer';
@@ -28,15 +28,14 @@ const styles = ({ palette }: Theme) =>
     root: {
       fill: palette.background.paper,
       stroke: palette.common.black,
-      '&:focus': {
-        outline: 0
-      },
-      '&:focus polygon': {
+      cursor: 'pointer'
+    },
+    focusVisible: {
+      '& polygon': {
         fill: palette.action.active,
         fillOpacity: palette.action.activatedOpacity,
         strokeOpacity: 1
-      },
-      cursor: 'pointer'
+      }
     },
     disabled: {
       cursor: 'default'
@@ -230,20 +229,19 @@ const Cell: React.ComponentType<CellProps> = ({
     return `${adjustedPoint.x},${adjustedPoint.y}`;
   };
   return (
-    <g
-      className={clsx(classes.root, {
-        [classes.disabled]: disabled
-      })}
+    <ButtonBase
+      component="g"
+      classes={{
+        root: classes.root,
+        focusVisible: classes.focusVisible,
+        disabled: classes.disabled
+      }}
       role="button"
       aria-label={label}
       data-cord-hash={location.hash()}
       aria-pressed="false"
       tabIndex={tabIndex}
       onKeyDown={(event: React.KeyboardEvent<SVGElement>): void => {
-        if (['Enter', ' '].includes(event.key)) {
-          event.preventDefault();
-          handleClick();
-        }
         onKeyDown(event);
       }}
       onClick={handleClick}
@@ -265,7 +263,7 @@ const Cell: React.ComponentType<CellProps> = ({
           player={stoneForTile.owner}
         />
       )}
-    </g>
+    </ButtonBase>
   );
 };
 
