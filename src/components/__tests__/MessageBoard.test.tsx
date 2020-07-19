@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, MockGameController } from 'test-utils';
-import { Matcher } from '@testing-library/dom';
+import { render, MockGameController, Matcher } from 'test-utils';
 
 import { GameState } from 'services/GameController';
 import Player from 'models/Player';

@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, MockGameController } from 'test-utils';
-import { fireEvent } from '@testing-library/react';
+import { render, MockGameController, fireEvent } from 'test-utils';
 
 import DarkModeSwitch from '../DarkModeSwitch';
 

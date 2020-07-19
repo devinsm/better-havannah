@@ -8,50 +8,6 @@ import Player from 'models/Player';
 import GameController, { GameState } from 'services/GameController';
 import createTheme from 'styles/createTheme';
 
-const getAppWrapper = ({
-  services,
-  theme = createTheme()
-}: {
-  services: Services;
-  theme?: Theme;
-}): React.ComponentType => {
-  const AppWrapper = ({
-    children
-  }: {
-    children?: React.ReactNode;
-  }): React.ReactElement => {
-    return (
-      <ThemeProvider theme={theme}>
-        <ServiceContext.Provider value={services}>
-          {children}
-        </ServiceContext.Provider>
-      </ThemeProvider>
-    );
-  };
-  return AppWrapper;
-};
-
-const customRender = (
-  ui: React.ReactElement,
-  options: Omit<RenderOptions, 'queries' | 'wrapper'> & {
-    services: Services;
-    theme?: Theme;
-  }
-): RenderResult =>
-  render(ui, {
-    wrapper: getAppWrapper({
-      services: options.services,
-      theme: options.theme
-    }),
-    ...options
-  });
-
-// re-export everything
-export * from '@testing-library/react';
-
-// override render method
-export { customRender as render };
-
 // Mock services which can be used and injected by tests
 export const MockGameController = ({
   boardSize,
@@ -77,3 +33,46 @@ export const MockGameController = ({
     getStone: jest.fn(),
     startGame: jest.fn()
   } as unknown) as GameController);
+
+const getAppWrapper = ({
+  services = {
+    gameController: MockGameController({ boardSize: 6 })
+  },
+  theme = createTheme()
+}: {
+  services?: Services;
+  theme?: Theme;
+} = {}): React.ComponentType => {
+  const AppWrapper = ({
+    children
+  }: {
+    children?: React.ReactNode;
+  }): React.ReactElement => {
+    return (
+      <ThemeProvider theme={theme}>
+        <ServiceContext.Provider value={services}>
+          {children}
+        </ServiceContext.Provider>
+      </ThemeProvider>
+    );
+  };
+  return AppWrapper;
+};
+
+const customRender = (
+  ui: React.ReactElement,
+  options?: Omit<RenderOptions, 'queries' | 'wrapper'> & {
+    services?: Services;
+    theme?: Theme;
+  }
+): RenderResult =>
+  render(ui, {
+    wrapper: getAppWrapper(options),
+    ...options
+  });
+
+// re-export everything
+export * from '@testing-library/react';
+
+// override render method
+export { customRender as render };

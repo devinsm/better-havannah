@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, MockGameController } from 'test-utils';
-import { within, fireEvent } from '@testing-library/react';
+import { render, MockGameController, within, fireEvent } from 'test-utils';
 
 import ConfigForm from '../ConfigForm';
 import { GameState } from 'services/GameController';
