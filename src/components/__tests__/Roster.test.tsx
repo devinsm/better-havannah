@@ -3,7 +3,7 @@ import { render } from 'test-utils';
 
 import Roster from '../Roster';
 
-test('it renders a link to the github page', () => {
+test('it renders a heading and two player names', () => {
   const { getByText } = render(<Roster />);
 
   const heading = getByText(/players/i);
