@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from 'test-utils';
 
 import InformationPanels from '../InformationPanels';
 
-test('it two accordions and they can be opened', async () => {
+test('it renders two accordions and they can be opened', async () => {
   const { getByText } = render(<InformationPanels />);
 
   const rulesAccordionButton = getByText(/rules/i);

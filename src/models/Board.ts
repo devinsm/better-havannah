@@ -84,10 +84,7 @@ export default class Board {
     if (cord.rank === this.getFirstRankInFile(cord.fileIndex)) {
       return BoardSide.MIDDLE_LEFT;
     }
-    if (cord.rank === this.getLastRankInFile(cord.fileIndex)) {
-      return BoardSide.MIDDLE_RIGHT;
-    }
-    return null;
+    return BoardSide.MIDDLE_RIGHT;
   };
 
   /**

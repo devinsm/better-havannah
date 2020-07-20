@@ -1,10 +1,15 @@
 import orderBy from 'lodash/orderBy';
 
-import Board, { BoardSide } from '../Board';
+import Board, { BoardSide, MAX_BOARD_SIZE } from '../Board';
 import Coordinate from 'models/Coordinate';
 
 const sortCords = (cords: Coordinate[]): Coordinate[] =>
   orderBy(cords, ['file', 'rank'], ['asc', 'asc']);
+
+test('constructor catches bad board sizes', () => {
+  expect(() => new Board(1)).toThrow();
+  expect(() => new Board(MAX_BOARD_SIZE + 1)).toThrow();
+});
 
 test('interior cords are not a corners or sides', () => {
   const testCases: { board: Board; interiorCords: Coordinate[] }[] = [
