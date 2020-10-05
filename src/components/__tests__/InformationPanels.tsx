@@ -9,9 +9,7 @@ test('it renders two accordions and they can be opened', async () => {
   const rulesAccordionButton = getByText(/rules/i);
   const keyboardShortcutsButton = getByText(/keyboard shortcuts/i);
   const rulesBody = getByText(/Connect Four on steroids/i);
-  const keyboardShortcutsBody = getByText(
-    /To navigate the board, use any of the following/i
-  );
+  const keyboardShortcutsBody = getByText(/can use the following shortcuts/i);
   expect(rulesAccordionButton).toBeInTheDocument();
   expect(keyboardShortcutsButton).toBeInTheDocument();
   expect(rulesBody).not.toBeVisible();

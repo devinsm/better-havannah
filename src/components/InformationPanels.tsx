@@ -72,30 +72,34 @@ const styles = ({ spacing, breakpoints, palette }: Theme) =>
   });
 export type InformationPanelsProps = WithStyles<typeof styles>;
 
-const SHORTCUTS: { key: string; actionDescription: string }[] = [
+const SHORTCUTS: { key: string[]; actionDescription: string }[] = [
   {
-    key: 'W',
+    key: ['W'],
     actionDescription: 'Move up'
   },
   {
-    key: 'Q',
+    key: ['Q'],
     actionDescription: 'Move diagonally up and to the left'
   },
   {
-    key: 'E',
+    key: ['E'],
     actionDescription: 'Move diagonally up and to the right'
   },
   {
-    key: 'S',
+    key: ['S'],
     actionDescription: 'Move down'
   },
   {
-    key: 'A',
+    key: ['A'],
     actionDescription: 'Move diagonally down and to the left'
   },
   {
-    key: 'D',
+    key: ['D'],
     actionDescription: 'Move diagonally down and to the right'
+  },
+  {
+    key: ['Enter', 'Space'],
+    actionDescription: 'Place a stone (if applicable)'
   }
 ];
 
@@ -157,11 +161,9 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
         <ExpansionPanelDetails classes={{ root: classes.details }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={9}>
-              <Typography variant="body1">
-                <span className={classes.shortcutKey}>Enter</span> or{' '}
-                <span className={classes.shortcutKey}> Space </span> can be used
-                to place a stone. To navigate the board, use any of the
-                following shortcuts:
+              <Typography>
+                Once the game board has focus (e.g. you have tabbed to it), you
+                can use the following shortcuts:
               </Typography>
               <Typography
                 variant="body1"
@@ -169,8 +171,17 @@ const InformationPanels: React.ComponentType<InformationPanelsProps> = ({
                 className={classes.shortcutList}
               >
                 {SHORTCUTS.map(shortCut => (
-                  <li key={shortCut.key} className={classes.shortcutListItem}>
-                    <span className={classes.shortcutKey}>{shortCut.key}</span>
+                  <li
+                    key={shortCut.key.join(',')}
+                    className={classes.shortcutListItem}
+                  >
+                    {shortCut.key.map((key, index) => (
+                      <span key={index}>
+                        {index > 0 && <span>or</span>}
+                        <span className={classes.shortcutKey}>{key}</span>
+                      </span>
+                    ))}
+
                     <span className={classes.shortcutDescription}>
                       {shortCut.actionDescription}
                     </span>
