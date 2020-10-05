@@ -99,7 +99,7 @@ const SHORTCUTS: { key: string[]; actionDescription: string }[] = [
   },
   {
     key: ['Enter', 'Space'],
-    actionDescription: 'Place a stone (if applicable)'
+    actionDescription: 'Place a stone'
   }
 ];
 
