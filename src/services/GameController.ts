@@ -298,16 +298,15 @@ export default class GameController {
   private fireConfetti = (): void => {
     const count = 1000;
     const defaults: Options & { disableForReducedMotion: boolean } = {
-      origin: { y: 0.7 },
       disableForReducedMotion: true
     };
 
     function fire(particleRatio: number, opts: Options): void {
-      confetti(
-        Object.assign({}, defaults, opts, {
-          particleCount: Math.floor(count * particleRatio)
-        })
-      );
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio)
+      });
     }
 
     fire(0.25, {
