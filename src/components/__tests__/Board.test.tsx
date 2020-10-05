@@ -54,7 +54,6 @@ function testInitialState({
       expect(tile.getAttribute('tabindex')).toBe('-1');
     }
     expect(tile.getAttribute('role')).toBe('button');
-    expect(tile.getAttribute('aria-pressed')).toBe('false');
   }
 }
 // Disabled jest/expect-expect since the assertions are in a helper function

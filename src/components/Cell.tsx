@@ -239,7 +239,6 @@ const Cell: React.ComponentType<CellProps> = ({
       role="button"
       aria-label={label}
       data-cord-hash={location.hash()}
-      aria-pressed="false"
       tabIndex={tabIndex}
       onKeyDown={(event: React.KeyboardEvent<SVGElement>): void => {
         onKeyDown(event);
